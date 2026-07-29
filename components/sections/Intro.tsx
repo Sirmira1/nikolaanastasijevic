@@ -23,7 +23,7 @@ export default function Intro() {
     const lenis = window.__lenis;
     if (lenis) {
       lenis.scrollTo("#hero", {
-        duration: 3.4,
+        duration: 2.8,
         easing: (t: number) => 1 - Math.pow(1 - t, 2.2),
       });
     } else {
@@ -83,7 +83,7 @@ export default function Intro() {
       data-shape-anchor="0.82"
       ref={sectionRef}
       aria-label="Signature"
-      className="relative h-[400vh] md:h-[440vh]"
+      className="relative h-[290vh] md:h-[320vh]"
     >
       <div className="sticky top-0 flex h-[100svh] flex-col px-5 pb-5 pt-20 md:px-10 md:pb-8 md:pt-24">
         <div className="pointer-events-none flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.28em] text-ink/45 md:text-[10px]">
