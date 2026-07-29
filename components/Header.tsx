@@ -44,11 +44,16 @@ export default function Header({ visible }: { visible: boolean }) {
 
   return (
     <motion.header
-      className="fixed inset-x-0 top-0 z-[200] mix-blend-difference"
+      className="fixed inset-x-0 top-0 z-[200]"
       initial={{ y: -60, opacity: 0 }}
       animate={visible ? { y: 0, opacity: 1 } : {}}
       transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
     >
+      {/* the field runs bright under here — the bar keeps its own dark ground */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[190%] bg-gradient-to-b from-void via-void/70 to-transparent"
+      />
       <div className="flex items-center justify-between px-5 py-5 md:px-8">
         <Magnetic strength={0.25}>
           <a
@@ -67,9 +72,9 @@ export default function Header({ visible }: { visible: boolean }) {
               key={l.n}
               href={l.href}
               onClick={(e) => go(e, l.href)}
-              className="group font-mono text-[10px] uppercase tracking-[0.28em] text-ink/70 transition-colors hover:text-ink"
+              className="group font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink"
             >
-              <span className="mr-1 text-ember/80">{l.n}</span>
+              <span className="mr-1 text-ember">{l.n}</span>
               {l.label}
               <span className="mt-0.5 block h-px w-0 bg-ember transition-all duration-300 group-hover:w-full" />
             </a>
@@ -77,13 +82,13 @@ export default function Header({ visible }: { visible: boolean }) {
         </nav>
 
         <div className="flex items-center gap-6">
-          <span className="hidden font-mono text-[10px] tracking-[0.2em] text-ink/50 md:inline">
+          <span className="hidden font-mono text-[10px] tracking-[0.2em] text-ink/70 md:inline">
             HAMILTON&nbsp;<Clock />
           </span>
           <Magnetic strength={0.4}>
             <button
               onClick={toggleCalm}
-              className="hidden items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-ink/70 transition-colors hover:text-ink sm:flex"
+              className="hidden items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink sm:flex"
               aria-pressed={calm}
               aria-label={calm ? "Turn effects back on" : "Calm mode: same content, no effects"}
               title={calm ? "Bring back the full experience" : "Same content, no effects"}
@@ -100,7 +105,7 @@ export default function Header({ visible }: { visible: boolean }) {
           <Magnetic strength={0.4}>
             <button
               onClick={() => window.dispatchEvent(new Event("open-terminal"))}
-              className="hidden font-mono text-[10px] uppercase tracking-[0.28em] text-ink/70 transition-colors hover:text-ink sm:inline"
+              className="hidden font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink sm:inline"
               aria-label="Open console"
             >
               <span className="text-ember">/</span>&nbsp;CONSOLE
@@ -109,7 +114,7 @@ export default function Header({ visible }: { visible: boolean }) {
           <Magnetic strength={0.4}>
             <button
               onClick={() => setSound(audio.toggle())}
-              className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-ink/70 transition-colors hover:text-ink"
+              className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink"
               aria-pressed={sound}
               aria-label={sound ? "Mute sound" : "Enable sound"}
             >

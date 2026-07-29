@@ -3,9 +3,9 @@
 @theme {
   --color-void: #08070b;
   --color-ink: #ece7df;
-  --color-dim: #9c968b;
+  --color-dim: #b7b1a5;
   --color-ember: #ff5c28;
-  --color-line: rgba(236, 231, 223, 0.08);
+  --color-line: rgba(236, 231, 223, 0.16);
   --font-display: var(--font-syne), system-ui, sans-serif;
   --font-serif: var(--font-instrument), Georgia, serif;
   --font-mono: var(--font-plex-mono), "SF Mono", monospace;
@@ -88,7 +88,7 @@ body {
 
 /* ---- outlined display text ---- */
 .text-stroke {
-  -webkit-text-stroke: 1px rgba(236, 231, 223, 0.55);
+  -webkit-text-stroke: 1px rgba(236, 231, 223, 0.7);
   color: transparent;
   transition: color 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }

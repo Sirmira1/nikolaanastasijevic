@@ -30,7 +30,7 @@ export default function SectionRail({ visible }: { visible: boolean }) {
         const idx = Math.round(world.blend);
         itemRefs.current.forEach((el, i) => {
           if (el) el.style.width = i === idx ? "28px" : "12px";
-          if (el) el.style.background = i === idx ? "#ff5c28" : "rgba(236,231,223,0.3)";
+          if (el) el.style.background = i === idx ? "#ff5c28" : "rgba(236,231,223,0.45)";
         });
       };
       window.addEventListener("scroll", onScroll, { passive: true });
@@ -48,8 +48,8 @@ export default function SectionRail({ visible }: { visible: boolean }) {
         el.style.width = `${12 + p * 18}px`;
         el.style.background =
           p > 0.5
-            ? `rgba(255,92,40,${0.45 + p * 0.55})`
-            : `rgba(236,231,223,${0.22 + p * 0.35})`;
+            ? `rgba(255,92,40,${0.55 + p * 0.45})`
+            : `rgba(236,231,223,${0.4 + p * 0.35})`;
       });
       raf = requestAnimationFrame(tick);
     };
@@ -79,7 +79,7 @@ export default function SectionRail({ visible }: { visible: boolean }) {
           className="group flex items-center gap-3 py-0.5"
           aria-label={s.label}
         >
-          <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-dim opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <span className="rounded-sm bg-void/70 px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.3em] text-ink opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             {s.label}
           </span>
           <span
@@ -87,7 +87,7 @@ export default function SectionRail({ visible }: { visible: boolean }) {
               itemRefs.current[i] = el;
             }}
             className="block h-px transition-[width] duration-300"
-            style={{ width: 12, background: "rgba(236,231,223,0.3)" }}
+            style={{ width: 12, background: "rgba(236,231,223,0.45)" }}
           />
         </a>
       ))}

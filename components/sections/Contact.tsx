@@ -34,8 +34,15 @@ export default function Contact() {
       id="talk"
       data-shape
       aria-label="Contact"
-      className="relative flex min-h-[100svh] flex-col justify-between px-5 pt-[18vh] md:px-10"
+      className="relative flex min-h-[100svh] flex-col justify-between px-5 pb-8 pt-[18vh] md:px-10"
     >
+      {/* the portal ring is the brightest thing on the site — this keeps the
+          type over it readable without smothering the ring itself */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,7,11,0.62)_0%,rgba(8,7,11,0.2)_26%,rgba(8,7,11,0.34)_60%,rgba(8,7,11,0.9)_100%)]"
+      />
+
       <div className="mx-auto w-full max-w-[1400px]">
         <SectionLabel index="06" title="Transmission — open channel" />
       </div>
@@ -54,7 +61,7 @@ export default function Contact() {
             <a
               href={`mailto:${EMAIL}`}
               data-cursor="SEND"
-              className="group relative flex h-40 w-40 items-center justify-center rounded-full border border-ink/25 bg-void/55 backdrop-blur-[2px] transition-colors duration-500 hover:border-ember md:h-48 md:w-48"
+              className="group relative flex h-40 w-40 items-center justify-center rounded-full border border-ink/40 bg-void/75 backdrop-blur-[3px] transition-colors duration-500 hover:border-ember md:h-48 md:w-48"
             >
               <span
                 aria-hidden="true"
@@ -69,11 +76,11 @@ export default function Contact() {
         </Rise>
 
         <Rise delay={0.3} className="flex flex-col items-center gap-2 font-mono text-xs text-dim">
-          <a href={`mailto:${EMAIL}`} className="group relative text-ink/80 transition-colors hover:text-ink">
+          <a href={`mailto:${EMAIL}`} className="group relative text-ink transition-colors hover:text-ember">
             {EMAIL}
             <span className="absolute -bottom-1 left-0 block h-px w-0 bg-ember transition-all duration-300 group-hover:w-full" />
           </a>
-          <span className="text-[10px] uppercase tracking-[0.25em]">
+          <span className="text-[10px] uppercase tracking-[0.25em] text-ink/75">
             Usually replies within 24h — open to co-ops, freelance builds & good problems
           </span>
         </Rise>
@@ -82,7 +89,7 @@ export default function Contact() {
           <button
             onClick={() => window.dispatchEvent(new Event("open-guestbook"))}
             data-cursor="SIGN"
-            className="group flex items-center gap-4 border border-ink/20 px-8 py-4 font-mono text-[10px] uppercase tracking-[0.3em] text-dim transition-all duration-500 hover:border-ember hover:text-ink"
+            className="group flex items-center gap-4 border border-ink/35 bg-void/70 px-8 py-4 font-mono text-[10px] uppercase tracking-[0.3em] text-ink/85 backdrop-blur-[3px] transition-all duration-500 hover:border-ember hover:bg-void/85 hover:text-ink"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-ember transition-transform duration-500 group-hover:scale-150" />
             You&rsquo;ve seen my signature — leave yours
@@ -90,8 +97,8 @@ export default function Contact() {
         </Rise>
       </div>
 
-      <footer className="mx-auto mt-[12vh] w-full max-w-[1400px] border-t border-line py-6">
-        <div className="flex flex-col items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.22em] text-dim md:flex-row">
+      <footer className="mx-auto mt-[12vh] w-full max-w-[1400px] border-t border-ink/20 py-6">
+        <div className="flex flex-col items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.22em] text-ink/75 md:flex-row">
           <span>© 2026 NIKOLA ANASTASIJEVIĆ</span>
           <nav aria-label="Social links" className="flex gap-6">
             {SOCIALS.map((s) => (
@@ -111,12 +118,12 @@ export default function Contact() {
             <span>
               HAMILTON, ONTARIO, CANADA — <LocalTime />
             </span>
-            <a href="#top" onClick={toTop} data-cursor="TOP" className="text-ink/70 transition-colors hover:text-ember">
+            <a href="#top" onClick={toTop} data-cursor="TOP" className="text-ink transition-colors hover:text-ember">
               ↑ TOP
             </a>
           </span>
         </div>
-        <p className="mt-3 flex flex-col gap-1 text-center font-mono text-[9px] uppercase tracking-[0.2em] text-ink/25 md:flex-row md:justify-between md:text-left">
+        <p className="mt-3 flex flex-col gap-1 text-center font-mono text-[9px] uppercase tracking-[0.2em] text-ink/50 md:flex-row md:justify-between md:text-left">
           <span>Designed & built by hand — no templates were harmed</span>
           <span>
             COLOPHON: NEXT.JS · R3F · GLSL · GSAP · WEB AUDIO · 16,384 PARTICLES ·

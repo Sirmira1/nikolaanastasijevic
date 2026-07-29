@@ -358,7 +358,7 @@ export default function Particles() {
       refs[i * 2] = ((i % size) + 0.5) / size;
       refs[i * 2 + 1] = (Math.floor(i / size) + 0.5) / size;
       rands[i] = Math.random();
-      ts[i] = i / count; // left-to-right progress through the mark
+      ts[i] = i / count; // replaced by the pen's timeline once the trace lands
     }
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute("aRef", new THREE.BufferAttribute(refs, 2));
@@ -409,17 +409,22 @@ export default function Particles() {
   useEffect(() => {
     let active = true;
     sampleSignature(count)
-      .then((signature) => {
+      .then(({ positions, times }) => {
         if (!active) return;
         const texture = material.uniforms.uShapes.value as THREE.DataTexture;
-        writeSignature(texture.image.data as Float32Array, signature, count);
+        writeSignature(texture.image.data as Float32Array, positions, count);
         texture.needsUpdate = true;
+        // when the pen reaches this particle, rather than where it sits in
+        // the queue — so the field fills at the speed of a hand
+        const aT = geometry.getAttribute("aT") as THREE.BufferAttribute;
+        (aT.array as Float32Array).set(times);
+        aT.needsUpdate = true;
       })
       .catch((error) => console.error("Could not load signature image", error));
     return () => {
       active = false;
     };
-  }, [count, material]);
+  }, [count, geometry, material]);
 
   useFrame(({ camera, clock }, dt) => {
     const u = material.uniforms;
