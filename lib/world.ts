@@ -57,8 +57,10 @@ type WorldState = {
   mouse: { x: number; y: number };
   /** smoothed pointer speed 0..~1 */
   mouseVel: number;
-  /** signature draw progress 0..1, scrubbed by the intro's scroll */
-  sigDraw: number;
+  /** true while a mouse or pen is present in the viewport */
+  pointerActive: boolean;
+  /** signature reveal progress 0..1, scrubbed by the intro's scroll */
+  markDraw: number;
   /** accent override while hovering a project (hex) or null */
   accent: string | null;
   /** last click: NDC coords + timestamp (s) + power (1 = click, >1 = boom) */
@@ -78,7 +80,8 @@ export const world: WorldState = {
   scrollVel: 0,
   mouse: { x: 0, y: 0 },
   mouseVel: 0,
-  sigDraw: 0,
+  pointerActive: false,
+  markDraw: 0,
   accent: null,
   clickAt: { x: 0, y: 0, t: -100, power: 0 },
   markQueue: [],

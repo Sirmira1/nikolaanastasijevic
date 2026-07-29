@@ -84,6 +84,8 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     /* ---- pointer → world (NDC + smoothed velocity) ---- */
     let lastX = 0, lastY = 0, lastT = performance.now(), hasLast = false;
     const onPointer = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      world.pointerActive = true;
       world.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       world.mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
       const now = performance.now();
@@ -95,10 +97,17 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       }
       lastX = e.clientX; lastY = e.clientY; lastT = now; hasLast = true;
     };
+    const deactivatePointer = () => {
+      world.pointerActive = false;
+      world.mouseVel = 0;
+      hasLast = false;
+    };
     const decay = window.setInterval(() => {
       world.mouseVel *= 0.86;
     }, 60);
     window.addEventListener("pointermove", onPointer, { passive: true });
+    document.documentElement.addEventListener("pointerleave", deactivatePointer);
+    window.addEventListener("blur", deactivatePointer);
 
     // every click detonates a shockwave in the particle field
     const onDown = (e: PointerEvent) => {
@@ -127,6 +136,8 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       window.clearTimeout(settle);
       window.clearInterval(decay);
       window.removeEventListener("pointermove", onPointer);
+      document.documentElement.removeEventListener("pointerleave", deactivatePointer);
+      window.removeEventListener("blur", deactivatePointer);
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("resize", onRefresh);
       window.removeEventListener("scroll", nativeScroll);
@@ -134,6 +145,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       if (rafTick) gsap.ticker.remove(rafTick);
       lenis?.destroy();
       window.__lenis = undefined;
+      deactivatePointer();
     };
   }, []);
 

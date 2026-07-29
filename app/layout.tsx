@@ -26,21 +26,21 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.nikolaanastasijevic.com"),
-  title: "NIKOLA ANASTASIJEVIĆ — Developer. I ship things.",
+  title: "Nikola Anastasijević — Software Developer in Hamilton",
   description:
-    "Software developer in Hamilton, Ontario, Canada. Web apps built end-to-end and actually shipped — Lusso Veloce, FlyBy, Project Garage, and a bot that trades gold. This portfolio is the playground.",
+    "Nikola Anastasijević is a software developer in Hamilton, Ontario building full-stack products across maps, automotive, finance, live trading data, and immersive 3D web experiences.",
   openGraph: {
-    title: "NIKOLA ANASTASIJEVIĆ — Developer. I ship things.",
+    title: "Nikola Anastasijević — Software Developer",
     description:
-      "An interactive observatory of shipped work. 16,000 particles, one signature, zero templates.",
+      "Full-stack products, mobile apps, and 3D web experiences built in Hamilton, Ontario.",
     type: "website",
     locale: "en_CA",
   },
   twitter: {
     card: "summary_large_image",
-    title: "NIKOLA ANASTASIJEVIĆ — Developer. I ship things.",
+    title: "Nikola Anastasijević — Software Developer",
     description:
-      "An interactive observatory of shipped work. 16,000 particles, one signature, zero templates.",
+      "Full-stack products, mobile apps, and 3D web experiences built in Hamilton, Ontario.",
   },
 };
 

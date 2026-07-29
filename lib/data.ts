@@ -23,7 +23,7 @@ export const PROJECTS: Project[] = [
     accent: "#ffb454",
     gradient: ["#3a2705", "#ffb454"],
     description:
-      "A luxury exotic car rental platform — curated fleet browsing, a polished reservation flow, real Stripe payments, and a complete Supabase backend. Built end-to-end, shipped for real.",
+      "A luxury car rental platform with real inventory, booking data, availability, and Stripe payments. I designed and built the complete customer journey, from choosing a car to confirming a paid reservation.",
     href: "https://lusso-veloce.vercel.app",
     image: "/img/Screenshot 2026-07-02 223147.png",
   },
@@ -36,7 +36,7 @@ export const PROJECTS: Project[] = [
     accent: "#6ea8ff",
     gradient: ["#0a1c3d", "#6ea8ff"],
     description:
-      "A driving app with live speed tracking, a global leaderboard, and a fog-of-war map — the world starts dark, and you unlock cities by actually driving through them.",
+      "A web and mobile driving app where the map starts hidden and opens as you explore. It tracks live and top speed, city completion, destinations, and a global leaderboard across every drive.",
     href: "https://fly-by-rosy.vercel.app",
     image: "/img/Screenshot 2026-07-03 143349.png",
   },
@@ -49,7 +49,7 @@ export const PROJECTS: Project[] = [
     accent: "#3fd2c7",
     gradient: ["#062c2a", "#3fd2c7"],
     description:
-      "An automated trading system that reads live gold charts and makes its own long/short decisions, with a Next.js dashboard watching its every move. It trades while I sleep.",
+      "An automated trading system that reads live gold-market data, evaluates strategies, and makes its own long or short decisions. A Next.js dashboard makes every signal and trade visible while I test it.",
     href: "https://tradebot-beta.vercel.app",
     image: "/img/Screenshot 2026-07-03 135757.png",
   },
@@ -62,9 +62,38 @@ export const PROJECTS: Project[] = [
     accent: "#ff5c28",
     gradient: ["#3d1206", "#ff5c28"],
     description:
-      "A car management app for people who love their machines — add your vehicles, log every modification with exact costs, track services, and watch total ownership spend over time.",
+      "The app I wanted for my own cars: every modification, service, and dollar in one place, with horsepower, speed, and ownership totals that evolve as each build does.",
     href: "https://project-garage-rose.vercel.app",
     image: "/img/Screenshot 2026-07-03 101118.png",
+  },
+];
+
+export type MoreWorkItem = {
+  title: string;
+  detail: string;
+  tools: string;
+};
+
+export const MORE_WORK: MoreWorkItem[] = [
+  {
+    title: "Four more 3D web worlds",
+    detail: "Immersive sites built around particles, motion, depth, and interaction — each with its own visual language.",
+    tools: "R3F / GLSL / GSAP",
+  },
+  {
+    title: "Local business websites",
+    detail: "Fast, practical sites for pizza shops, gyms, and other Hamilton-area businesses that need to work as well as they look.",
+    tools: "NEXT.JS / WORDPRESS",
+  },
+  {
+    title: "Finance planner",
+    detail: "A personal finance tracker for turning everyday spending, budgets, and longer-term goals into one readable plan.",
+    tools: "REACT / DATA VISUALIZATION",
+  },
+  {
+    title: "Wishlist platform",
+    detail: "A focused place to collect, organize, and share the things worth saving for later.",
+    tools: "FULL-STACK WEB",
   },
 ];
 
@@ -106,28 +135,28 @@ export type CareerEntry = {
 
 export const CAREER: CareerEntry[] = [
   {
-    period: "2026 — NOW",
+    period: "MAY 2026 — DEC 2026+",
     role: "Co-op Developer",
     place: "Ministry of Public & Business Service Delivery & Procurement (MPBSDP)",
-    note: "Two consecutive co-op terms through December — quality and testing focus. Learning what production software demands when real people depend on it.",
+    note: "Two consecutive co-op terms through at least December 2026, contributing inside a public-sector technology team and learning how software is built when reliability matters at scale.",
   },
   {
-    period: "2024 — NOW",
+    period: "JAN 2025 — NOW",
     role: "Software Development",
     place: "Mohawk College — Program 559",
-    note: "Web-app focused. The coursework teaches the fundamentals; the shipping happens between semesters.",
+    note: "A hands-on software development program spanning web, mobile, databases, and application engineering. The coursework builds the foundation; my own products push it further.",
   },
   {
-    period: "NIGHTS & WEEKENDS",
-    role: "Independent Builder",
-    place: "My own backlog",
-    note: "Lusso Veloce, Project Garage, FlyBy, a bot that trades gold on its own. No client, no brief — just the rule that everything gets finished.",
+    period: "SEP 2023 — DEC 2024",
+    role: "Computer Science",
+    place: "Brock University",
+    note: "Started in computer science, then chose a different route when I realized I wanted far more time writing software. That decision led me to Mohawk and a much more applied program.",
   },
   {
-    period: "DAY ZERO",
-    role: "First localhost:3000",
-    place: "A bedroom, way too late",
-    note: "One page, one button, one console.log. Some habits survive.",
+    period: "ALWAYS IN PROGRESS",
+    role: "Independent Developer",
+    place: "My own product backlog",
+    note: "Maps, cars, finance, trading, local businesses, and four more 3D websites. I keep choosing projects with real moving parts because that is where I learn fastest.",
   },
 ];
 

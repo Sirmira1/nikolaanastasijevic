@@ -1,7 +1,6 @@
 import { ImageResponse } from "next/og";
-import { SIG_PATHS, SIG_VIEWBOX } from "@/lib/signature";
 
-export const alt = "Nikola Anastasijević — Software Developer. I finish the thing.";
+export const alt = "Nikola Anastasijević — Software Developer in Hamilton, Ontario.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -50,30 +49,58 @@ export default function OpengraphImage() {
           HAMILTON, ON — CANADA
         </div>
 
-        <svg
-          width={760}
-          height={334}
-          viewBox={SIG_VIEWBOX}
-          style={{ marginTop: -10 }}
+        <div
+          style={{
+            width: 900,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: 24,
+          }}
         >
-          {SIG_PATHS.map((p, i) => (
-            <path
-              key={i}
-              d={p.d}
-              fill="none"
-              stroke={p.ember ? "#ff5c28" : "#ece7df"}
-              strokeWidth={p.ember ? 5 : 7}
-              strokeLinecap="round"
-            />
-          ))}
-        </svg>
+          <div
+            style={{
+              display: "flex",
+              color: "#ece7df",
+              fontFamily: "serif",
+              fontSize: 174,
+              fontStyle: "italic",
+              lineHeight: 0.86,
+            }}
+          >
+            Nikola
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              marginTop: 18,
+            }}
+          >
+            <div style={{ display: "flex", flex: 1, height: 2, background: "#ff5c28" }} />
+            <div
+              style={{
+                display: "flex",
+                margin: "0 24px",
+                color: "#ece7df",
+                fontSize: 47,
+                fontWeight: 800,
+                letterSpacing: "0.12em",
+              }}
+            >
+              ANASTASIJEVIĆ
+            </div>
+            <div style={{ display: "flex", flex: 1, height: 2, background: "#ff5c28" }} />
+          </div>
+        </div>
 
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            marginTop: 8,
+            marginTop: 34,
           }}
         >
           <div
@@ -96,10 +123,7 @@ export default function OpengraphImage() {
               letterSpacing: "0.3em",
             }}
           >
-            SOFTWARE DEVELOPER —{" "}
-            <span style={{ color: "#ff5c28", marginLeft: 10 }}>
-              I FINISH THE THING
-            </span>
+            SOFTWARE DEVELOPER — HAMILTON, ONTARIO
           </div>
         </div>
       </div>

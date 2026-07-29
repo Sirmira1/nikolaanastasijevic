@@ -108,8 +108,9 @@ export default function Terminal() {
       case "whoami":
         print([
           { text: "Nikola Anastasijević — software developer, Hamilton, Ontario, Canada." },
-          { text: "Mohawk College (559) · co-op @ MPBSDP · ships real things." },
-          { text: "Current status: probably building. Or driving.", kind: "dim" },
+          { text: "Mohawk Software Development (Jan 2025—now) · co-op @ MPBSDP (May—Dec 2026+)." },
+          { text: "Builds around cars, maps, live data, payments, and interfaces with a point of view." },
+          { text: "Current status: probably building. Possibly driving.", kind: "dim" },
         ]);
         break;
       case "projects":

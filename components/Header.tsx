@@ -47,7 +47,7 @@ export default function Header({ visible }: { visible: boolean }) {
       className="fixed inset-x-0 top-0 z-[200] mix-blend-difference"
       initial={{ y: -60, opacity: 0 }}
       animate={visible ? { y: 0, opacity: 1 } : {}}
-      transition={{ duration: 1, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="flex items-center justify-between px-5 py-5 md:px-8">
         <Magnetic strength={0.25}>

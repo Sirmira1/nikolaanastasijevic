@@ -4,20 +4,18 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { world } from "@/lib/world";
-import { SIG_PATHS, SIG_VIEWBOX } from "@/lib/signature";
 import { calmMode } from "@/lib/calm";
 
 gsap.registerPlugin(ScrollTrigger);
 
 /**
- * The opening rite. A near-empty void; scrolling makes a pen of light
- * write the signature in particle dust, echoed by a faint ink ghost.
- * The ghost dissolves as the particles leave for the galaxy.
+ * The opening rite. Scrolling resolves Nikola's signature from particle
+ * dust before the field leaves for the galaxy.
  */
 export default function Intro() {
   const sectionRef = useRef<HTMLElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
   const captionRef = useRef<HTMLDivElement>(null);
+  const identityRef = useRef<HTMLDivElement>(null);
   const beginRef = useRef<HTMLDivElement>(null);
 
   // fly through the signature for people who'd rather watch than scroll
@@ -25,7 +23,7 @@ export default function Intro() {
     const lenis = window.__lenis;
     if (lenis) {
       lenis.scrollTo("#hero", {
-        duration: 5,
+        duration: 2.2,
         easing: (t: number) => 1 - Math.pow(1 - t, 2.2),
       });
     } else {
@@ -35,32 +33,16 @@ export default function Intro() {
 
   useEffect(() => {
     const section = sectionRef.current;
-    const svg = svgRef.current;
-    if (!section || !svg) return;
+    if (!section) return;
 
     const reduced = calmMode();
-    const paths = Array.from(svg.querySelectorAll<SVGPathElement>("path"));
-    const lengths = paths.map((p) => p.getTotalLength());
-    const total = lengths.reduce((a, b) => a + b, 0);
-    // cumulative fraction range each stroke occupies in pen order
-    const starts: number[] = [];
-    let acc = 0;
-    for (const len of lengths) {
-      starts.push(acc / total);
-      acc += len;
-    }
 
     if (reduced) {
-      world.sigDraw = 1;
-      paths.forEach((p) => p.style.setProperty("stroke-dasharray", "none"));
+      world.markDraw = 1;
       if (captionRef.current) captionRef.current.style.opacity = "1";
+      if (identityRef.current) identityRef.current.style.opacity = "1";
       return;
     }
-
-    paths.forEach((p, i) => {
-      p.style.strokeDasharray = `${lengths[i]}`;
-      p.style.strokeDashoffset = `${lengths[i]}`;
-    });
 
     const st = ScrollTrigger.create({
       trigger: section,
@@ -68,21 +50,18 @@ export default function Intro() {
       end: "bottom bottom",
       onUpdate: (self) => {
         const p = self.progress;
-        const draw = gsap.utils.clamp(0, 1, (p - 0.05) / 0.62);
-        world.sigDraw = draw;
+        const draw = gsap.utils.clamp(0, 1, (p - 0.02) / 0.44);
+        world.markDraw = draw;
 
-        paths.forEach((el, i) => {
-          const span = lengths[i] / total;
-          const local = gsap.utils.clamp(0, 1, (draw - starts[i]) / span);
-          el.style.strokeDashoffset = `${lengths[i] * (1 - local)}`;
-        });
-
-        // the ink ghost dissolves as the dust departs for the galaxy
-        const fadeOut = 1 - gsap.utils.clamp(0, 1, (p - 0.84) / 0.12);
-        svg.style.opacity = `${fadeOut}`;
+        // the caption dissolves as the particles depart
+        const fadeOut = 1 - gsap.utils.clamp(0, 1, (p - 0.66) / 0.16);
         if (captionRef.current) {
-          const fadeIn = gsap.utils.clamp(0, 1, (p - 0.68) / 0.12);
+          const fadeIn = gsap.utils.clamp(0, 1, (p - 0.34) / 0.1);
           captionRef.current.style.opacity = `${fadeIn * fadeOut}`;
+        }
+        if (identityRef.current) {
+          const identityFade = 1 - gsap.utils.clamp(0, 1, (p - 0.56) / 0.16);
+          identityRef.current.style.opacity = `${identityFade}`;
         }
 
         // the begin button retires as soon as the visitor takes over
@@ -104,61 +83,60 @@ export default function Intro() {
       data-shape-anchor="0.82"
       ref={sectionRef}
       aria-label="Signature"
-      className="relative h-[320vh]"
+      className="relative h-[165vh] md:h-[175vh]"
     >
-      <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center px-5">
-        {/* ink ghost — the particles write, this echoes */}
-        <svg
-          ref={svgRef}
-          viewBox={SIG_VIEWBOX}
-          className="w-[min(90vw,920px)]"
-          aria-hidden="true"
-        >
-          {SIG_PATHS.map((p, i) => (
-            <path
-              key={i}
-              d={p.d}
-              fill="none"
-              stroke={p.ember ? "#ff5c28" : "#ece7df"}
-              strokeWidth={p.ember ? 2 : 2.5}
-              strokeLinecap="round"
-              opacity={0}
-            />
-          ))}
-        </svg>
+      <div className="sticky top-0 flex h-[100svh] flex-col px-5 pb-5 pt-20 md:px-10 md:pb-8 md:pt-24">
+        <div className="pointer-events-none flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.28em] text-ink/45 md:text-[10px]">
+          <span>Portfolio / 2026</span>
+          <span className="hidden sm:inline">16,384 particles / one continuous world</span>
+        </div>
 
-        <div
-          ref={captionRef}
-          className="mt-12 text-center font-mono text-[10px] uppercase tracking-[0.35em] text-dim opacity-0 md:mt-6"
-        >
-          Nikola Anastasijević
-          <span className="mx-3 text-ember">/</span>
-          Hamilton, Ontario — Canada
+        <div className="relative flex min-h-0 flex-1 items-center justify-center">
+          <div
+            ref={captionRef}
+            className="absolute bottom-2 text-center font-mono text-[9px] uppercase tracking-[0.3em] text-dim opacity-0 md:text-[10px]"
+          >
+            Signature
+            <span className="mx-3 text-ember">/</span>
+            2026
+          </div>
         </div>
 
         <div
-          ref={beginRef}
-          className="absolute bottom-12 transition-opacity duration-700"
+          ref={identityRef}
+          className="grid w-full grid-cols-[1fr_auto] items-end gap-x-5 gap-y-3 border-t border-line pt-4 transition-opacity md:grid-cols-[1fr_1.2fr_auto] md:gap-10 md:pt-5"
         >
-          <button
-            onClick={begin}
-            data-cursor="GO"
-            className="group flex flex-col items-center gap-3 font-mono text-[10px] uppercase tracking-[0.35em] text-dim transition-colors hover:text-ink"
-            aria-label="Begin — scrolls through the intro for you"
-          >
-            <span className="relative flex h-11 w-11 items-center justify-center">
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 rounded-full border border-ink/25 transition-colors duration-300 group-hover:border-ember"
-              />
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 animate-ping rounded-full border border-ember/40 [animation-duration:2.4s]"
-              />
-              <span aria-hidden="true" className="text-sm text-ember">↓</span>
+          <div>
+            <span className="font-mono text-[9px] uppercase tracking-[0.26em] text-ember md:text-[10px]">
+              Software Developer
             </span>
-            Begin
-          </button>
+            <h2 className="mt-1 font-display text-xl font-bold leading-none text-ink sm:text-2xl md:text-4xl">
+              Nikola Anastasijević
+            </h2>
+          </div>
+
+          <p className="col-span-2 max-w-xl font-mono text-[10px] leading-relaxed text-dim sm:text-xs md:col-span-1">
+            Full-stack products, mobile apps, and immersive web experiences —
+            designed and built from interface to deployment.
+          </p>
+
+          <div ref={beginRef} className="row-start-1 justify-self-end transition-opacity duration-500 md:col-start-3">
+            <button
+              onClick={begin}
+              data-cursor="GO"
+              className="group flex items-center gap-3 font-mono text-[9px] uppercase tracking-[0.28em] text-dim transition-colors hover:text-ink md:text-[10px]"
+              aria-label="Enter portfolio"
+            >
+              <span className="hidden sm:inline">Enter</span>
+              <span className="relative flex h-10 w-10 items-center justify-center rounded-full border border-ink/25 transition-colors duration-300 group-hover:border-ember">
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0 animate-ping rounded-full border border-ember/35 [animation-duration:2.4s]"
+                />
+                <span aria-hidden="true" className="text-sm text-ember">↓</span>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </section>

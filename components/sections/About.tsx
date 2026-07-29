@@ -79,24 +79,24 @@ export default function About() {
 
       <div className="grid gap-16 lg:grid-cols-[1.5fr_1fr] lg:gap-24">
         <RevealLines className="font-display text-[7.2vw] font-semibold leading-[1.12] tracking-tight text-ink sm:text-[5vw] lg:text-[3.4vw]">
-          <Line>I finish</Line>
+          <Line>I build what</Line>
           <Line>
-            the <span className="font-serif italic text-ember">thing</span>.
+            I wish <span className="font-serif italic text-ember">existed</span>.
           </Line>
           <Line className="mt-8 font-mono text-sm font-normal normal-case leading-relaxed tracking-normal text-dim lg:text-base">
-            Nikola Anastasijević — software development student at Mohawk
+            I&rsquo;m Nikola — a software developer in Hamilton, studying at Mohawk
           </Line>
           <Line className="font-mono text-sm font-normal leading-relaxed tracking-normal text-dim lg:text-base">
-            College, co-op developer at MPBSDP. I build web apps end-to-end
+            and working a co-op at MPBSDP. My own work is where it gets personal:
           </Line>
           <Line className="font-mono text-sm font-normal leading-relaxed tracking-normal text-dim lg:text-base">
-            and actually ship them: rentals with real payments, apps with
+            a map that uncovers as I drive, software for every dollar spent on
           </Line>
           <Line className="font-mono text-sm font-normal leading-relaxed tracking-normal text-dim lg:text-base">
-            real users, a bot with real money on the line. I learn by
+            my cars, a rental flow with real bookings, and a bot reading live
           </Line>
           <Line className="font-mono text-sm font-normal leading-relaxed tracking-normal text-dim lg:text-base">
-            shipping, not by watching tutorials.
+            markets. I like owning the whole build — interface, data, and launch.
           </Line>
         </RevealLines>
 
@@ -121,9 +121,9 @@ export default function About() {
           <Rise delay={0.25} className="flex flex-col gap-3 font-mono text-xs leading-relaxed tracking-wide text-dim">
             {[
               ["BASE", "Hamilton, Ontario"],
-              ["NOW", "Co-op @ MPBSDP / Mohawk"],
-              ["FOCUS", "Web apps, end-to-end"],
-              ["BELIEF", "Finish the thing"],
+              ["NOW", "MPBSDP + Mohawk"],
+              ["OBSESSIONS", "Cars, maps, useful software"],
+              ["RANGE", "Minimal interfaces to 3D worlds"],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between gap-6 border-b border-line pb-3">
                 <span className="text-ink/50">{k}</span>
@@ -135,10 +135,10 @@ export default function About() {
       </div>
 
       <div className="mt-28 grid grid-cols-2 gap-8 md:grid-cols-4">
-        <Stat value={4} suffix="" label="Products shipped" />
-        <Stat value={3} suffix="" label="Design studies live" />
-        <Stat value={2} suffix="" label="Co-op terms" />
-        <Stat value={1} suffix="" label="Bot trading gold" />
+        <Stat value={4} suffix="+" label="3D web worlds" />
+        <Stat value={9} suffix="" label="Languages in the toolbox" />
+        <Stat value={2} suffix="" label="FlyBy platforms" />
+        <Stat value={1} suffix="" label="Bot reading live markets" />
       </div>
 
       <GitHubLive />

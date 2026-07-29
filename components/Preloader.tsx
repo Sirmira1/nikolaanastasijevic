@@ -53,7 +53,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
     const reduced = calmMode();
     setCalm(reduced);
     const t0 = performance.now();
-    const DURATION = reduced ? 400 : 2600;
+    const DURATION = reduced ? 300 : 1500;
     let raf = 0;
 
     const tick = () => {
@@ -73,7 +73,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
           setGone(true);
           document.documentElement.style.overflow = "";
           onDone();
-        }, reduced ? 50 : 550);
+        }, reduced ? 50 : 260);
       }
     };
     raf = requestAnimationFrame(tick);
@@ -279,7 +279,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
         <motion.div
           className="fixed inset-0 z-[500] flex flex-col items-center justify-center bg-void"
           exit={{ clipPath: "inset(0 0 100% 0)" }}
-          transition={{ duration: 1.1, ease: [0.83, 0, 0.17, 1] }}
+          transition={{ duration: 0.75, ease: [0.83, 0, 0.17, 1] }}
           aria-hidden="true"
         >
           <div className="relative flex w-full flex-col items-center gap-6">

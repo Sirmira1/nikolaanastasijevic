@@ -154,8 +154,9 @@ export default function Playground() {
               AT <span className="font-serif italic text-ember">2AM</span>
             </h2>
             <p className="max-w-xs font-mono text-sm leading-relaxed text-dim">
-              Experiments with no client, no brief, no deadline. This is where
-              the techniques in the real work are born.
+              I use the lab to change visual languages completely: soft,
+              minimal, casual, professional, noir, or fully three-dimensional.
+              The style follows the project, not a template.
             </p>
           </div>
 
@@ -166,7 +167,7 @@ export default function Playground() {
           {/* closing slate */}
           <div className="flex w-[60vw] shrink-0 items-center justify-center sm:w-[30vw]">
             <p className="max-w-[24ch] text-center font-serif text-2xl italic leading-snug text-dim">
-              &ldquo;Every experiment is a question the browser answers.&rdquo;
+              Same developer. A completely different atmosphere every time.
             </p>
           </div>
         </div>

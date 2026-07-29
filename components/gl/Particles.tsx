@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { world, NUM_SHAPES, SECTION_PALETTES, SECTION_OPACITY } from "@/lib/world";
-import { sampleSignature, signatureScale } from "@/lib/signature";
+import { markScale, sampleSignature } from "@/lib/signature";
 import { audio } from "@/lib/audio";
 
 /* ------------------------------------------------------------------ */
@@ -19,7 +19,7 @@ type ShapeFn = (i: number, count: number, out: THREE.Vector3) => void;
 
 const TILT = new THREE.Matrix4().makeRotationX(-0.42);
 
-// shapes 1..N — shape 0 (the signature) is sampled from SVG pen paths
+// shapes 1..N — shape 0 is the full-name particle mark
 const shapeFns: ShapeFn[] = [
   // 1 — HERO: spiral galaxy, tilted toward the camera
   (i, count, out) => {
@@ -113,20 +113,20 @@ const shapeFns: ShapeFn[] = [
   },
 ];
 
+function writeSignature(data: Float32Array, signature: Float32Array, count: number) {
+  for (let i = 0; i < count; i++) {
+    const o = i * 4;
+    data[o] = signature[i * 3];
+    data[o + 1] = signature[i * 3 + 1];
+    data[o + 2] = signature[i * 3 + 2];
+    data[o + 3] = 1;
+  }
+}
+
 function buildShapeTexture(size: number) {
   const count = size * size;
   const data = new Float32Array(count * NUM_SHAPES * 4);
   const v = new THREE.Vector3();
-
-  // shape 0 — the signature, in pen order
-  const sig = sampleSignature(count);
-  for (let i = 0; i < count; i++) {
-    const o = i * 4;
-    data[o] = sig[i * 3];
-    data[o + 1] = sig[i * 3 + 1];
-    data[o + 2] = sig[i * 3 + 2];
-    data[o + 3] = 1;
-  }
 
   for (let s = 1; s < NUM_SHAPES; s++) {
     const fn = shapeFns[s - 1];
@@ -212,8 +212,9 @@ uniform float uIntro;
 uniform float uForce;
 uniform float uVel;
 uniform float uDraw;
-uniform float uSigK;
-uniform vec3 uMouse;
+uniform float uMarkK;
+uniform vec2 uMouse;
+uniform float uAspect;
 uniform vec3 uClickPos;
 uniform float uClickTime;
 uniform float uClickPower;
@@ -240,21 +241,21 @@ void main() {
   vec3 pA = texture2D(uShapes, uvA).xyz;
   vec3 pB = texture2D(uShapes, uvB).xyz;
 
-  // shape 0 is the signature: unwritten particles hang as loose dust,
-  // a pen of light writes them onto the stroke as uDraw advances
-  float sig = 1.0 - clamp(uBlend, 0.0, 1.0);
+  // Shape 0 is the personal mark: unrevealed particles hang as loose
+  // dust before a horizontal wave resolves the letterforms.
+  float mark = 1.0 - clamp(uBlend, 0.0, 1.0);
   vFade = 0.0;
   float tip = 0.0;
-  if (sig > 0.001) {
+  if (mark > 0.001) {
     float drawn = 1.0 - smoothstep(uDraw - 0.002, uDraw + 0.014, aT);
     vec3 dust = pA + vec3(
       sin(aT * 913.7 + aRand * 17.0),
       cos(aT * 547.3 + aRand * 11.0),
       sin(aT * 311.9 + aRand * 23.0)
-    ) * (1.3 + aRand * 3.2) * uSigK;
+    ) * (1.3 + aRand * 3.2) * uMarkK;
     pA = mix(dust, pA, drawn);
-    vFade = sig * (1.0 - drawn);
-    tip = exp(-abs(aT - uDraw) * 90.0) * sig
+    vFade = mark * (1.0 - drawn);
+    tip = exp(-abs(aT - uDraw) * 90.0) * mark
         * smoothstep(0.0, 0.02, uDraw)
         * (1.0 - smoothstep(0.97, 1.0, uDraw));
   }
@@ -274,10 +275,7 @@ void main() {
   // scroll velocity smears the field vertically
   pos.y += uVel * aRand * 0.6;
 
-  // cursor repulsion — a pressure wave in the field
-  vec3 d = pos - uMouse;
-  float force = exp(-dot(d, d) / 2.4) * uForce;
-  pos += normalize(d + vec3(0.0001)) * force;
+  float force = 0.0;
 
   // click shockwave — an expanding ring of displacement + light
   float ct = uTime - uClickTime;
@@ -298,11 +296,22 @@ void main() {
   pos = mix(shell, pos, ti);
 
   vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+
+  // Cursor pressure is measured in screen space so formations at any
+  // depth and camera angle react exactly where they appear on screen.
+  vec4 cursorClip = projectionMatrix * mv;
+  vec2 cursorDelta = cursorClip.xy / max(cursorClip.w, 0.0001) - uMouse;
+  cursorDelta.x *= uAspect;
+  float cursorForce = exp(-dot(cursorDelta, cursorDelta) / 0.035) * uForce;
+  vec2 cursorDirection = normalize(cursorDelta + vec2(0.0001));
+  mv.xy += cursorDirection * cursorForce * max(-mv.z, 0.1) * 0.075;
+  force += cursorForce;
+
   gl_Position = projectionMatrix * mv;
   gl_PointSize = uSize * uPixelRatio * (0.5 + aRand * 1.6)
     * (1.0 + force * 1.2 + tip * 2.0)
     * (1.0 - vFade * 0.45)
-    * mix(1.0, uSigK, sig)
+    * mix(1.0, uMarkK, mark)
     / max(-mv.z, 0.1);
 
   vRand = aRand;
@@ -349,7 +358,7 @@ export default function Particles() {
       refs[i * 2] = ((i % size) + 0.5) / size;
       refs[i * 2 + 1] = (Math.floor(i / size) + 0.5) / size;
       rands[i] = Math.random();
-      ts[i] = i / count; // pen-order progress along the signature
+      ts[i] = i / count; // left-to-right progress through the mark
     }
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute("aRef", new THREE.BufferAttribute(refs, 2));
@@ -373,8 +382,9 @@ export default function Particles() {
         uForce: { value: 0 },
         uVel: { value: 0 },
         uDraw: { value: 0 },
-        uSigK: { value: signatureScale() },
-        uMouse: { value: new THREE.Vector3(999, 999, 0) },
+        uMarkK: { value: markScale() },
+        uMouse: { value: new THREE.Vector2(999, 999) },
+        uAspect: { value: 1 },
         uClickPos: { value: new THREE.Vector3(0, 0, 0) },
         uClickTime: { value: -100 },
         uClickPower: { value: 0 },
@@ -392,10 +402,24 @@ export default function Particles() {
   const colB = useMemo(() => new THREE.Color(), []);
   const tmpA = useMemo(() => new THREE.Color(), []);
   const tmpB = useMemo(() => new THREE.Color(), []);
-  const mouse3 = useMemo(() => new THREE.Vector3(), []);
   const proj = useMemo(() => new THREE.Vector3(), []);
   const lastClick = useRef(-100);
   const audioLvl = useRef(0);
+
+  useEffect(() => {
+    let active = true;
+    sampleSignature(count)
+      .then((signature) => {
+        if (!active) return;
+        const texture = material.uniforms.uShapes.value as THREE.DataTexture;
+        writeSignature(texture.image.data as Float32Array, signature, count);
+        texture.needsUpdate = true;
+      })
+      .catch((error) => console.error("Could not load signature image", error));
+    return () => {
+      active = false;
+    };
+  }, [count, material]);
 
   useFrame(({ camera, clock }, dt) => {
     const u = material.uniforms;
@@ -417,8 +441,8 @@ export default function Particles() {
     const vel = THREE.MathUtils.clamp(world.scrollVel / 40, -1.4, 1.4);
     u.uVel.value += (vel - u.uVel.value) * k;
 
-    // the pen follows the intro's scrub closely
-    const drawTarget = rm ? 1 : world.sigDraw;
+    // the reveal follows the intro's scrub closely
+    const drawTarget = rm ? 1 : world.markDraw;
     u.uDraw.value += (drawTarget - u.uDraw.value) * (1 - Math.exp(-8 * delta));
 
     // new click → project into world space and detonate
@@ -436,19 +460,14 @@ export default function Particles() {
       }
     }
 
-    // cursor in world space, projected onto the z=0 plane
-    if (!rm) {
-      proj.set(world.mouse.x, world.mouse.y, 0.5).unproject(camera);
-      proj.sub(camera.position).normalize();
-      const t = -camera.position.z / (proj.z || -1);
-      if (t > 0) {
-        mouse3.copy(camera.position).addScaledVector(proj, t);
-        u.uMouse.value.lerp(mouse3, 1 - Math.exp(-9 * delta));
-      }
+    // cursor stays in NDC; the shader measures proximity after projection
+    if (!rm && world.pointerActive) {
+      (u.uMouse.value as THREE.Vector2).set(world.mouse.x, world.mouse.y);
+      u.uAspect.value = gl.domElement.clientWidth / Math.max(gl.domElement.clientHeight, 1);
       const targetForce = 0.35 + world.mouseVel * 2.4;
       u.uForce.value += (targetForce - u.uForce.value) * (1 - Math.exp(-4 * delta));
     } else {
-      u.uForce.value = 0;
+      u.uForce.value += (0 - u.uForce.value) * (1 - Math.exp(-7 * delta));
     }
 
     // palette follows the section blend; project hover overrides it

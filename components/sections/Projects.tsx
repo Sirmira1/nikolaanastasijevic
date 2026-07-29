@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring } from "framer-motion";
-import { PROJECTS } from "@/lib/data";
+import { MORE_WORK, PROJECTS } from "@/lib/data";
 import { world } from "@/lib/world";
 import { SectionLabel, Rise } from "@/components/ui/Split";
 
@@ -148,8 +148,47 @@ export default function Projects() {
         </ul>
 
         <Rise className="mt-10 text-right font-mono text-[10px] uppercase tracking-[0.3em] text-dim">
-          Everything above is live & clickable — plus three design studies in the lab
+          Everything above is live and clickable
         </Rise>
+
+        <div className="mt-28 border-t border-line pt-8 md:mt-36">
+          <div className="mb-10 grid gap-4 md:grid-cols-[1fr_2fr] md:items-end">
+            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-ember">
+              Beyond the selected four
+            </span>
+            <p className="max-w-2xl font-display text-2xl font-semibold leading-tight text-ink md:text-4xl">
+              The backlog moves between cars, maps, money, local businesses,
+              and whatever I wish existed next.
+            </p>
+          </div>
+
+          <div className="grid border-b border-line md:grid-cols-2">
+            {MORE_WORK.map((item, i) => (
+              <Rise
+                key={item.title}
+                delay={i * 0.05}
+                className={`border-t border-line py-8 md:py-10 ${
+                  i % 2 === 0 ? "md:pr-10" : "md:border-l md:pl-10"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-6">
+                  <h3 className="font-display text-xl font-bold text-ink md:text-2xl">
+                    {item.title}
+                  </h3>
+                  <span className="shrink-0 font-mono text-[9px] uppercase tracking-[0.2em] text-ink/45">
+                    {String(i + 5).padStart(3, "0")}
+                  </span>
+                </div>
+                <p className="mt-4 max-w-lg font-mono text-sm leading-relaxed text-dim">
+                  {item.detail}
+                </p>
+                <span className="mt-5 block font-mono text-[9px] uppercase tracking-[0.24em] text-ember/80">
+                  {item.tools}
+                </span>
+              </Rise>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* floating preview — follows the cursor, leans with its velocity */}

@@ -5,10 +5,9 @@ morph through eight formations (signature → galaxy → wave → torus knot →
 → vortex → chaos → portal ring) as you scroll, while a cinematic camera flies
 between them.
 
-The opening is a signature rite: a near-empty void where scrolling makes a pen
-of light write the signature in particle dust (echoed by a faint SVG ink ghost)
-before the site begins. The signature pen strokes live in `lib/signature.ts` —
-swap the path strings there to use a real signature; everything else follows.
+The opening resolves Nikola&rsquo;s uploaded signature from particle dust before the
+site moves into the galaxy. Its raster ink is thresholded into world-space points
+in `lib/signature.ts`; the same particle system drives every later formation.
 
 ## Run
 
