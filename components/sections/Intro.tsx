@@ -23,7 +23,7 @@ export default function Intro() {
     const lenis = window.__lenis;
     if (lenis) {
       lenis.scrollTo("#hero", {
-        duration: 2.2,
+        duration: 3.4,
         easing: (t: number) => 1 - Math.pow(1 - t, 2.2),
       });
     } else {
@@ -50,17 +50,17 @@ export default function Intro() {
       end: "bottom bottom",
       onUpdate: (self) => {
         const p = self.progress;
-        const draw = gsap.utils.clamp(0, 1, (p - 0.02) / 0.44);
+        const draw = gsap.utils.clamp(0, 1, (p - 0.015) / 0.7);
         world.markDraw = draw;
 
         // the caption dissolves as the particles depart
-        const fadeOut = 1 - gsap.utils.clamp(0, 1, (p - 0.66) / 0.16);
+        const fadeOut = 1 - gsap.utils.clamp(0, 1, (p - 0.82) / 0.085);
         if (captionRef.current) {
-          const fadeIn = gsap.utils.clamp(0, 1, (p - 0.34) / 0.1);
+          const fadeIn = gsap.utils.clamp(0, 1, (p - 0.53) / 0.16);
           captionRef.current.style.opacity = `${fadeIn * fadeOut}`;
         }
         if (identityRef.current) {
-          const identityFade = 1 - gsap.utils.clamp(0, 1, (p - 0.56) / 0.16);
+          const identityFade = 1 - gsap.utils.clamp(0, 1, (p - 0.77) / 0.085);
           identityRef.current.style.opacity = `${identityFade}`;
         }
 
@@ -83,7 +83,7 @@ export default function Intro() {
       data-shape-anchor="0.82"
       ref={sectionRef}
       aria-label="Signature"
-      className="relative h-[165vh] md:h-[175vh]"
+      className="relative h-[400vh] md:h-[440vh]"
     >
       <div className="sticky top-0 flex h-[100svh] flex-col px-5 pb-5 pt-20 md:px-10 md:pb-8 md:pt-24">
         <div className="pointer-events-none flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.28em] text-ink/45 md:text-[10px]">
