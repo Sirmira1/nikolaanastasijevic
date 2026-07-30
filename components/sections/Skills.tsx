@@ -39,13 +39,13 @@ export default function Skills() {
                 <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-ember">
                   {group.label}
                 </span>
-                <span className="font-serif text-lg italic text-dim">{group.note}</span>
+                <span className="font-serif text-lg italic text-ink/70">{group.note}</span>
               </div>
               <div className="flex flex-wrap items-baseline gap-x-8 gap-y-3">
                 {group.items.map((item) => (
                   <span
                     key={item}
-                    className="text-stroke cursor-default font-display text-4xl font-bold tracking-tight transition-colors duration-300 hover:text-ink md:text-6xl"
+                    className="cursor-default font-display text-4xl font-bold tracking-tight text-ink/85 transition-colors duration-300 hover:text-ember md:text-6xl"
                   >
                     {item}
                   </span>

@@ -112,6 +112,12 @@ body {
 .line-mask {
   display: block;
   overflow: hidden;
+  /* Room below the baseline. The mask clips at the padding edge, so without
+     this a descender at tight leading loses its tail — the g in "something"
+     was cut clean off. The negative margin gives the space straight back, so
+     nothing moves. */
+  padding-bottom: 0.24em;
+  margin-bottom: -0.24em;
 }
 
 .line-mask > span {

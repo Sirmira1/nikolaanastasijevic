@@ -18,13 +18,39 @@ export default function Projects() {
   const tilt = useMotionValue(0);
   const rot = useSpring(tilt, { stiffness: 120, damping: 14 });
   const lastX = useRef(0);
+  const pointer = useRef<{ x: number; y: number } | null>(null);
+
+  /**
+   * Which row is hovered is decided by what is actually under the cursor, not
+   * by enter/leave events. Those only fire when the *pointer* moves, so
+   * scrolling the page out from under a still cursor left the preview stuck to
+   * it; and scrolling quickly with the cursor over the list fired a burst of
+   * them, flickering every row's dim state and the accent behind the section.
+   * Above a walking pace the hover is simply held clear.
+   */
+  const syncHover = () => {
+    const at = pointer.current;
+    if (!at) return;
+    const under = document.elementFromPoint(at.x, at.y) as HTMLElement | null;
+    const row = under?.closest?.("[data-project]") as HTMLElement | undefined;
+    setHovered(row ? Number(row.dataset.project) : null);
+  };
 
   const onMove = (e: React.PointerEvent) => {
+    const at = pointer.current;
+    // the browser re-dispatches a pointermove at the same coordinates after a
+    // scroll, to refresh :hover. That is the page moving, not the hand — and
+    // treating it as a hover is half of what made this section flicker.
+    const stationary = at !== null && at.x === e.clientX && at.y === e.clientY;
+    pointer.current = { x: e.clientX, y: e.clientY };
+    if (stationary) return;
+
     mx.set(e.clientX);
     my.set(e.clientY);
     const dx = e.clientX - lastX.current;
     lastX.current = e.clientX;
     tilt.set(Math.max(-14, Math.min(14, dx * 0.6)));
+    syncHover();
   };
 
   useEffect(() => {
@@ -34,8 +60,45 @@ export default function Projects() {
     };
   }, [hovered]);
 
-  // pointerleave never fires when the page scrolls away under a still
-  // pointer — drop the preview as soon as the section leaves the viewport
+  /**
+   * Scrolling may only ever *clear* a hover, never move it to another row.
+   * Rows sliding past a still cursor are not something the visitor pointed
+   * at: following them lit up and dimmed the whole list several times a
+   * second on a fast scroll, and dragged the section's accent through the
+   * particle field with it. Only the hand moving the pointer picks a row —
+   * plus one resolve once the page comes to rest, which cannot flicker
+   * because it happens once.
+   */
+  useEffect(() => {
+    let queued = false;
+    let settle: number | undefined;
+
+    const onScroll = () => {
+      window.clearTimeout(settle);
+      settle = window.setTimeout(syncHover, 130);
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        const at = pointer.current;
+        if (!at) return;
+        const under = document.elementFromPoint(at.x, at.y) as HTMLElement | null;
+        const row = under?.closest?.("[data-project]") as HTMLElement | undefined;
+        const idx = row ? Number(row.dataset.project) : null;
+        setHovered((cur) => (cur === null || cur === idx ? cur : null));
+      });
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.clearTimeout(settle);
+      window.removeEventListener("scroll", onScroll);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // a last resort: if the section leaves the viewport entirely, nothing in it
+  // can be hovered
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -59,7 +122,10 @@ export default function Projects() {
       aria-label="Selected work"
       className="relative px-5 py-[20vh] md:px-10"
       onPointerMove={onMove}
-      onPointerLeave={() => setHovered(null)}
+      onPointerLeave={() => {
+        pointer.current = null;
+        setHovered(null);
+      }}
     >
       <div className="section-veil" aria-hidden="true" />
       {/* ambient glow that adopts the hovered project's color */}
@@ -91,7 +157,7 @@ export default function Projects() {
                     rel="noreferrer"
                     data-cursor="VISIT"
                     className="group block py-8 outline-offset-[-4px] md:py-10"
-                    onPointerEnter={() => setHovered(i)}
+                    data-project={i}
                     onFocus={() => setHovered(i)}
                     onBlur={() => setHovered(null)}
                   >
