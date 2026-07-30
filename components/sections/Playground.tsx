@@ -37,6 +37,7 @@ function ExperimentCard({ e }: { e: (typeof EXPERIMENTS)[number] }) {
       onPointerMove={tilt}
       onPointerLeave={untilt}
       data-cursor="PLAY"
+      data-lab-card
       className="group relative h-[58vh] w-[78vw] shrink-0 overflow-hidden rounded-sm border border-line will-change-transform sm:w-[46vw] lg:w-[30vw]"
       style={{ transformStyle: "preserve-3d" }}
     >
@@ -102,12 +103,76 @@ function ExperimentCard({ e }: { e: (typeof EXPERIMENTS)[number] }) {
 export default function Playground() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const fillRef = useRef<HTMLSpanElement>(null);
+  const countRef = useRef<HTMLSpanElement>(null);
+  const sideCueRef = useRef<HTMLSpanElement>(null);
+  const downCueRef = useRef<HTMLSpanElement>(null);
+  /** card centres along the track, measured once — reading them per frame
+   *  would force a layout on every scroll tick */
+  const centresRef = useRef<number[]>([]);
+  const spanRef = useRef(0);
   const [reduced, setReduced] = useState(false);
+
+  /**
+   * While this section is pinned the page stops moving vertically, and the
+   * track ends on a closing line — between them, people read it as the bottom
+   * of the site and leave. So the pin carries its own progress: a bar that
+   * fills, a count that climbs, and a cue that turns from "sideways" to
+   * "there is more below" as the track runs out.
+   */
+  const measure = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    centresRef.current = Array.from(
+      track.querySelectorAll<HTMLElement>("[data-lab-card]")
+    ).map((el) => el.offsetLeft + el.offsetWidth / 2);
+    spanRef.current = Math.max(track.scrollWidth - window.innerWidth, 1);
+  };
+
+  const report = (p: number) => {
+    const clamped = Math.max(0, Math.min(1, p));
+    if (fillRef.current) fillRef.current.style.transform = `scaleX(${clamped})`;
+
+    const centres = centresRef.current;
+    if (countRef.current && centres.length) {
+      // whichever card is nearest the middle of the screen right now
+      const eye = clamped * spanRef.current + window.innerWidth / 2;
+      let at = 0;
+      let best = Infinity;
+      for (let i = 0; i < centres.length; i++) {
+        const d = Math.abs(centres[i] - eye);
+        if (d < best) {
+          best = d;
+          at = i;
+        }
+      }
+      const n = centres.length;
+      countRef.current.textContent = `${String(at + 1).padStart(2, "0")} / ${String(n).padStart(2, "0")}`;
+    }
+    const ending = clamped > 0.78 ? 1 : 0;
+    if (sideCueRef.current) sideCueRef.current.style.opacity = `${1 - ending}`;
+    if (downCueRef.current) downCueRef.current.style.opacity = `${ending}`;
+  };
+
+  const toTalk = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const lenis = window.__lenis;
+    if (lenis) lenis.scrollTo("#talk", { duration: 1.6, easing: (t: number) => 1 - Math.pow(1 - t, 4) });
+    else document.querySelector("#talk")?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
     if (calmMode()) {
       setReduced(true);
-      return;
+      const scroller = scrollerRef.current;
+      if (!scroller) return;
+      measure();
+      const onScroll = () =>
+        report(scroller.scrollLeft / Math.max(scroller.scrollWidth - scroller.clientWidth, 1));
+      scroller.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+      return () => scroller.removeEventListener("scroll", onScroll);
     }
     const section = sectionRef.current;
     const track = trackRef.current;
@@ -121,10 +186,17 @@ export default function Playground() {
           trigger: section,
           start: "top top",
           end: () => `+=${track.scrollWidth - window.innerWidth}`,
-          scrub: 1,
+          // tighter than a full second: the lag is what makes a pinned
+          // section feel stuck rather than driven
+          scrub: 0.6,
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          onUpdate: (self) => report(self.progress),
+          onRefresh: (self) => {
+            measure();
+            report(self.progress);
+          },
         },
       });
     }, section);
@@ -139,7 +211,10 @@ export default function Playground() {
       aria-label="Creative experiments"
       className="relative overflow-hidden"
     >
-      <div className={`flex h-[100svh] items-center ${reduced ? "overflow-x-auto" : ""}`}>
+      <div
+        ref={scrollerRef}
+        className={`flex h-[100svh] items-center ${reduced ? "overflow-x-auto" : ""}`}
+      >
         <div ref={trackRef} className="flex w-max items-center gap-6 px-5 md:gap-10 md:px-10">
           {/* opening slate */}
           <div className="flex w-[80vw] shrink-0 flex-col justify-center gap-6 sm:w-[46vw] lg:w-[26vw]">
@@ -164,13 +239,66 @@ export default function Playground() {
             <ExperimentCard key={e.index} e={e} />
           ))}
 
-          {/* closing slate */}
-          <div className="flex w-[60vw] shrink-0 items-center justify-center sm:w-[30vw]">
+          {/* closing slate — hands the visitor on rather than signing off */}
+          <div
+            data-closing-slate
+            className="flex w-[70vw] shrink-0 flex-col items-center justify-center gap-8 sm:w-[34vw]"
+          >
             <p className="max-w-[24ch] text-center font-serif text-2xl italic leading-snug text-dim">
               Same developer. A completely different atmosphere every time.
             </p>
+            <a
+              href="#talk"
+              onClick={toTalk}
+              data-cursor="NEXT"
+              className="group flex flex-col items-center gap-3 font-mono text-[10px] uppercase tracking-[0.3em] text-ink/80 transition-colors hover:text-ink"
+            >
+              <span>
+                Next <span className="text-ember">06</span> — Transmission
+              </span>
+              <span
+                aria-hidden="true"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/30 text-sm transition-colors duration-300 group-hover:border-ember group-hover:text-ember"
+              >
+                ↓
+              </span>
+            </a>
           </div>
         </div>
+      </div>
+
+      {/* pinned with the section: proof that the page is still moving */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-void via-void/85 to-transparent px-5 pb-5 pt-10 md:px-10 md:pb-7">
+        <div className="flex items-end justify-between gap-6 font-mono text-[9px] uppercase tracking-[0.28em] text-ink/70 md:text-[10px]">
+          <span className="flex items-center gap-3">
+            <span className="text-ember">05</span>
+            <span className="hidden sm:inline">The lab</span>
+            <span ref={countRef} className="text-ink/50" aria-hidden="true">
+              01 / {String(EXPERIMENTS.length).padStart(2, "0")}
+            </span>
+          </span>
+
+          <span className="relative grid text-right">
+            <span ref={sideCueRef} className="col-start-1 row-start-1 transition-opacity duration-300">
+              Scroll <span className="text-ember">→</span>
+            </span>
+            <span
+              ref={downCueRef}
+              className="col-start-1 row-start-1 text-ink opacity-0 transition-opacity duration-300"
+            >
+              <span className="hidden sm:inline">Keep going — </span>06 Transmission{" "}
+              <span className="text-ember">↓</span>
+            </span>
+          </span>
+        </div>
+
+        <span aria-hidden="true" className="mt-3 block h-[2px] w-full bg-ink/15">
+          <span
+            ref={fillRef}
+            className="block h-[2px] w-full origin-left scale-x-0 bg-ember will-change-transform"
+            style={{ boxShadow: "0 0 10px rgba(255,92,40,0.55)" }}
+          />
+        </span>
       </div>
     </section>
   );
