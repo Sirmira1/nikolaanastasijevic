@@ -32,7 +32,7 @@ export const SECTION_PALETTES: [string, string][] = [
 ];
 
 /** Particle field opacity per section — the world recedes while you read. */
-export const SECTION_OPACITY = [1, 1, 0.55, 0.4, 0.34, 0.45, 0.68, 0.95];
+export const SECTION_OPACITY = [1, 1, 0.55, 0.4, 0.34, 0.45, 0.58, 0.95];
 
 /** Camera keyframes per section: position + lookAt. */
 export const CAMERA_KEYS: { pos: [number, number, number]; look: [number, number, number] }[] = [
@@ -63,6 +63,10 @@ type WorldState = {
   markDraw: number;
   /** accent override while hovering a project (hex) or null */
   accent: string | null;
+  /** true while the lab's horizontal track is pinned and being travelled */
+  labActive: boolean;
+  /** how far through that track, 0..1 — the field turns with it */
+  labProgress: number;
   /** last click: NDC coords + timestamp (s) + power (1 = click, >1 = boom) */
   clickAt: { x: number; y: number; t: number; power: number };
   /** queued visitor-signature strokes (world-space xyz triplets) for the trail system */
@@ -83,6 +87,8 @@ export const world: WorldState = {
   pointerActive: false,
   markDraw: 0,
   accent: null,
+  labActive: false,
+  labProgress: 0,
   clickAt: { x: 0, y: 0, t: -100, power: 0 },
   markQueue: [],
   started: false,

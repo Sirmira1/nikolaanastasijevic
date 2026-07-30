@@ -15,6 +15,9 @@ import { audio } from "@/lib/audio";
 
 const gauss = () => Math.random() + Math.random() + Math.random() - 1.5;
 
+/** where the lab's palette lands by the far end of the horizontal wall */
+const LAB_FAR: [string, string] = ["#3fd2c7", "#ffd166"];
+
 type ShapeFn = (i: number, count: number, out: THREE.Vector3) => void;
 
 const TILT = new THREE.Matrix4().makeRotationX(-0.42);
@@ -212,6 +215,8 @@ uniform float uIntro;
 uniform float uForce;
 uniform float uVel;
 uniform float uDraw;
+uniform float uLabAmt;
+uniform float uLabFlow;
 uniform float uMarkK;
 uniform vec2 uMouse;
 uniform float uAspect;
@@ -261,6 +266,19 @@ void main() {
   }
 
   vec3 pos = mix(pA, pB, t);
+
+  // travelling sideways through the lab turns the room: the field rotates
+  // about Y with horizontal progress and swells as it goes, so the world
+  // behind the work is visibly moving because *you* are moving
+  if (uLabAmt > 0.001) {
+    float a = uLabFlow * 2.4 * uLabAmt;
+    float ca = cos(a);
+    float sa = sin(a);
+    vec3 turned = vec3(pos.x * ca - pos.z * sa, pos.y, pos.x * sa + pos.z * ca);
+    turned.y += sin(uLabFlow * 5.0 + aRand * 12.0) * 0.5;
+    turned *= 1.0 + uLabFlow * 0.16;
+    pos = mix(pos, turned, uLabAmt);
+  }
 
   // idle breathing — the formation is never still
   float n1 = snoise(pos * 0.32 + uTime * 0.055);
@@ -382,6 +400,8 @@ export default function Particles() {
         uForce: { value: 0 },
         uVel: { value: 0 },
         uDraw: { value: 0 },
+        uLabAmt: { value: 0 },
+        uLabFlow: { value: 0 },
         uMarkK: { value: markScale() },
         uMouse: { value: new THREE.Vector2(999, 999) },
         uAspect: { value: 1 },
@@ -475,6 +495,11 @@ export default function Particles() {
       u.uForce.value += (0 - u.uForce.value) * (1 - Math.exp(-7 * delta));
     }
 
+    // the lab's horizontal travel, eased so entering and leaving is gradual
+    u.uLabAmt.value +=
+      ((world.labActive && !rm ? 1 : 0) - u.uLabAmt.value) * (1 - Math.exp(-3.5 * delta));
+    u.uLabFlow.value += (world.labProgress - u.uLabFlow.value) * (1 - Math.exp(-6 * delta));
+
     // palette follows the section blend; project hover overrides it
     const b = u.uBlend.value;
     const i0 = Math.min(Math.floor(b), NUM_SHAPES - 1);
@@ -487,6 +512,14 @@ export default function Particles() {
       tmpA.set(SECTION_PALETTES[i0][0]).lerp(colB.set(SECTION_PALETTES[i1][0]), f);
       tmpB.set(SECTION_PALETTES[i0][1]).lerp(colA.set(SECTION_PALETTES[i1][1]), f);
     }
+    // and the colour walks across the lab, so the far end of the wall is
+    // not the same room as the near end
+    if (u.uLabAmt.value > 0.001 && !world.accent) {
+      const k = u.uLabAmt.value * u.uLabFlow.value;
+      tmpA.lerp(colA.set(LAB_FAR[0]), k);
+      tmpB.lerp(colB.set(LAB_FAR[1]), k);
+    }
+
     (u.uColorA.value as THREE.Color).lerp(tmpA, 1 - Math.exp(-3.5 * delta));
     (u.uColorB.value as THREE.Color).lerp(tmpB, 1 - Math.exp(-3.5 * delta));
 
