@@ -183,6 +183,7 @@ export default function Playground() {
   const countRef = useRef<HTMLSpanElement>(null);
   const sideCueRef = useRef<HTMLSpanElement>(null);
   const downCueRef = useRef<HTMLSpanElement>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
   const rulesRef = useRef<HTMLDivElement>(null);
   const ghostRef = useRef<HTMLSpanElement>(null);
   const [reduced, setReduced] = useState(false);
@@ -286,6 +287,7 @@ export default function Playground() {
       const scroller = scrollerRef.current;
       if (!scroller) return;
       measure();
+      if (stripRef.current) stripRef.current.style.opacity = "1";
       const onScroll = () =>
         report(scroller.scrollLeft / Math.max(scroller.scrollWidth - scroller.clientWidth, 1));
       scroller.addEventListener("scroll", onScroll, { passive: true });
@@ -341,6 +343,10 @@ export default function Playground() {
           },
           onToggle: (self) => {
             world.labActive = self.isActive;
+            // The strip is anchored to the bottom of the section, so once the
+            // pin lets go it rides up through the page as a full-width rule.
+            // It belongs to the traverse: it exists while the wall does.
+            if (stripRef.current) stripRef.current.style.opacity = self.isActive ? "1" : "0";
           },
         },
       });
@@ -460,7 +466,10 @@ export default function Playground() {
       </div>
 
       {/* pinned with the section: proof that the page is still moving */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-void via-void/85 to-transparent px-5 pb-5 pt-10 md:px-10 md:pb-7">
+      <div
+        ref={stripRef}
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-void via-void/85 to-transparent px-5 pb-5 pt-10 opacity-0 transition-opacity duration-300 md:px-10 md:pb-7"
+      >
         <div className="flex items-end justify-between gap-6 font-mono text-[9px] uppercase tracking-[0.28em] text-ink/70 md:text-[10px]">
           <span className="flex items-center gap-3">
             <span className="text-ember">05</span>
@@ -484,7 +493,14 @@ export default function Playground() {
           </span>
         </div>
 
-        <span aria-hidden="true" className="mt-3 block h-[2px] w-full bg-ink/15">
+        <span
+          aria-hidden="true"
+          className="mt-3 block h-[2px] w-full bg-ink/15"
+          style={{
+            maskImage: "linear-gradient(to right, transparent, #000 3%, #000 97%, transparent)",
+            WebkitMaskImage: "linear-gradient(to right, transparent, #000 3%, #000 97%, transparent)",
+          }}
+        >
           <span
             ref={fillRef}
             className="block h-[2px] w-full origin-left scale-x-0 bg-ember will-change-transform"
