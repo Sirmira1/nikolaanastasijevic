@@ -18,6 +18,16 @@ const gauss = () => Math.random() + Math.random() + Math.random() - 1.5;
 /** where the lab's palette lands by the far end of the horizontal wall */
 const LAB_FAR: [string, string] = ["#3fd2c7", "#ffd166"];
 
+/**
+ * Length of the lab's ribbon field along X, and the wave numbers laid on it.
+ * Both waves complete a whole number of cycles over LAB_SPAN, which is what
+ * lets the shader slide the field sideways and wrap it: a particle that runs
+ * off one end lands on an identical point of the pattern at the other, so the
+ * ribbons stream forever without a seam. Keep these in step with the shader.
+ */
+const LAB_SPAN = 26;
+const LAB_LANES = 7;
+
 type ShapeFn = (i: number, count: number, out: THREE.Vector3) => void;
 
 const TILT = new THREE.Matrix4().makeRotationX(-0.42);
@@ -92,15 +102,20 @@ const shapeFns: ShapeFn[] = [
     const angle = y * 1.25 + gauss() * 0.35 + t * 40;
     out.set(Math.cos(angle) * r, y, Math.sin(angle) * r * 0.9);
   },
-  // 5 — PLAYGROUND: clustered chaos
+  // 5 — PLAYGROUND: ribbons of light running the length of the wall, so
+  // travelling sideways reads as travelling *along* something
   (i, count, out) => {
-    const cluster = i % 6;
-    const ca = (cluster / 6) * Math.PI * 2;
-    const cr = 2.6 + (cluster % 3) * 0.9;
-    const cx = Math.cos(ca) * cr;
-    const cy = Math.sin(ca * 2.3) * 1.9;
-    const cz = Math.sin(ca) * cr * 0.7;
-    out.set(cx + gauss() * 1.35, cy + gauss() * 1.35, cz + gauss() * 1.35);
+    const lane = i % LAB_LANES;
+    const x = (Math.random() - 0.5) * LAB_SPAN;
+    const k = (Math.PI * 2 * 2) / LAB_SPAN; // two cycles across the span
+    const kz = (Math.PI * 2) / LAB_SPAN; // one — both wrap cleanly
+    const phase = lane * 1.73;
+    const rise = (lane - (LAB_LANES - 1) / 2) * 1.22;
+    out.set(
+      x,
+      rise + Math.sin(x * k + phase) * 0.62 + gauss() * 0.11,
+      Math.sin(x * kz + phase * 1.4) * 1.9 + gauss() * 0.3
+    );
   },
   // 6 — CONTACT: a portal ring, facing the viewer
   (i, count, out) => {
@@ -217,6 +232,7 @@ uniform float uVel;
 uniform float uDraw;
 uniform float uLabAmt;
 uniform float uLabFlow;
+uniform float uLabClock;
 uniform float uMarkK;
 uniform vec2 uMouse;
 uniform float uAspect;
@@ -267,17 +283,19 @@ void main() {
 
   vec3 pos = mix(pA, pB, t);
 
-  // travelling sideways through the lab turns the room: the field rotates
-  // about Y with horizontal progress and swells as it goes, so the world
-  // behind the work is visibly moving because *you* are moving
+  // the lab's ribbons stream past as you travel the wall. The whole field
+  // slides along X and wraps at the span; because the ribbon pattern is
+  // periodic over exactly that distance, a particle leaving one end reappears
+  // on an identical part of the pattern and the flow never shows a seam.
+  // Scaling the shift by uLabAmt means it grows from nothing on the way in,
+  // so there is nothing to cross-fade and nothing to tear.
   if (uLabAmt > 0.001) {
-    float a = uLabFlow * 2.4 * uLabAmt;
-    float ca = cos(a);
-    float sa = sin(a);
-    vec3 turned = vec3(pos.x * ca - pos.z * sa, pos.y, pos.x * sa + pos.z * ca);
-    turned.y += sin(uLabFlow * 5.0 + aRand * 12.0) * 0.5;
-    turned *= 1.0 + uLabFlow * 0.16;
-    pos = mix(pos, turned, uLabAmt);
+    float span = 26.0;
+    float shift = (uLabFlow * 44.0 + uLabClock) * uLabAmt;
+    pos.x = mod(pos.x + shift + span * 0.5, span) - span * 0.5;
+    // and the ribbons breathe across their own length
+    pos.y += sin(pos.x * 0.24 + uLabClock * 0.6) * 0.28 * uLabAmt;
+    pos.z += cos(pos.x * 0.19 - uLabClock * 0.4) * 0.34 * uLabAmt;
   }
 
   // idle breathing — the formation is never still
@@ -402,6 +420,7 @@ export default function Particles() {
         uDraw: { value: 0 },
         uLabAmt: { value: 0 },
         uLabFlow: { value: 0 },
+        uLabClock: { value: 0 },
         uMarkK: { value: markScale() },
         uMouse: { value: new THREE.Vector2(999, 999) },
         uAspect: { value: 1 },
@@ -499,6 +518,9 @@ export default function Particles() {
     u.uLabAmt.value +=
       ((world.labActive && !rm ? 1 : 0) - u.uLabAmt.value) * (1 - Math.exp(-3.5 * delta));
     u.uLabFlow.value += (world.labProgress - u.uLabFlow.value) * (1 - Math.exp(-6 * delta));
+    // an ambient drift that only runs while the lab is on screen — starting
+    // from zero, so easing in never yanks the field sideways
+    u.uLabClock.value += delta * 1.15 * u.uLabAmt.value;
 
     // palette follows the section blend; project hover overrides it
     const b = u.uBlend.value;

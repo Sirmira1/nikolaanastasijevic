@@ -176,6 +176,17 @@ export const EXPERIMENTS: Experiment[] = [
   { index: "E—04", title: "FOG OF WAR", medium: "Mapbox exploration mask from FlyBy", gradient: ["#032622", "#3fd2c7"], image: "/img/Screenshot 2026-07-08 112150.png" },
   { index: "E—05", title: "BACKTEST RIG", medium: "Trading strategies, simulated overnight", gradient: ["#26043a", "#ff6ad5"], image: "/img/Screenshot 2026-07-08 112603.png" },
   { index: "E—06", title: "THE OBSERVATORY", medium: "This website — 16,000 particles deep", gradient: ["#2d0a02", "#ff5c28"], image: "/img/Screenshot 2026-07-08 112400.png" },
+
+  /* ---- placeholders: the 3D builds, waiting on captures and links.
+     Each one renders its gradient until an `image` is added. Replace the
+     title and medium, drop in `image` and `href`, and the wall picks up the
+     new size, height and depth on its own. The word PLACEHOLDER is in the
+     visible caption on purpose — nothing here should ship as finished. ---- */
+  { index: "E—07", title: "APEX", medium: "Placeholder — 3D racing world", gradient: ["#2a0604", "#ff5c28"] },
+  { index: "E—08", title: "THE HALL", medium: "Placeholder — walkable 3D museum", gradient: ["#0e1024", "#c9a2ff"] },
+  { index: "E—09", title: "OVERCLOCK", medium: "Placeholder — cyberdeck interface", gradient: ["#02131b", "#3fd2c7"] },
+  { index: "E—10", title: "MEADOW", medium: "Placeholder — 3D grass world you can walk", gradient: ["#0a1c08", "#8ede5a"] },
+  { index: "E—11", title: "UNTITLED", medium: "Placeholder — next experiment", gradient: ["#15121d", "#9c96ff"] },
 ];
 
 export const SOCIALS = [

@@ -30,8 +30,12 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     /* ---- section centers → continuous blend index ---- */
     let centers: number[] = [];
+    /** which formation belongs to the pinned horizontal section */
+    let labShape = -1;
     const measure = () => {
-      centers = Array.from(document.querySelectorAll<HTMLElement>("[data-shape]")).map((el) => {
+      const shapes = Array.from(document.querySelectorAll<HTMLElement>("[data-shape]"));
+      labShape = shapes.findIndex((el) => el.id === "lab");
+      centers = shapes.map((el) => {
         const r = el.getBoundingClientRect();
         // anchor: where along the section its shape is "at home" (0..1 of height)
         const anchor = parseFloat(el.dataset.shapeAnchor ?? "0.5");
@@ -54,7 +58,11 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       const max = document.documentElement.scrollHeight - window.innerHeight;
       world.scroll = max > 0 ? scrollY / max : 0;
       world.scrollVel = velocity;
-      world.blend = computeBlend(scrollY);
+      // a pinned section keeps taking scroll while staying put, so the blend
+      // would drift off its own formation halfway along the wall. Hold it
+      // there for the whole traverse — the lab keeps its own background.
+      world.blend =
+        world.labActive && labShape >= 0 ? labShape : computeBlend(scrollY);
     };
 
     /* ---- Lenis ---- */
