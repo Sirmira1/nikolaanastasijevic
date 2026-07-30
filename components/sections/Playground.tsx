@@ -369,7 +369,16 @@ export default function Playground() {
     >
       {/* background plates — they travel at their own rates, so the room
           behind the work moves too */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+        style={{
+          // fade the rules and the wordmark toward the section's own edges,
+          // so nothing ends on a hard line when the wall scrolls away
+          maskImage: "linear-gradient(to bottom, transparent, #000 14%, #000 84%, transparent)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent, #000 14%, #000 84%, transparent)",
+        }}
+      >
         <span
           ref={ghostRef}
           className="absolute left-[8vw] top-1/2 -translate-y-1/2 whitespace-nowrap font-display text-[34vw] font-extrabold leading-none tracking-tighter text-ink/[0.035] will-change-transform"

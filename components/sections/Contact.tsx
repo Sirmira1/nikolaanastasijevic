@@ -40,7 +40,7 @@ export default function Contact() {
           type over it readable without smothering the ring itself */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,7,11,0.62)_0%,rgba(8,7,11,0.2)_26%,rgba(8,7,11,0.34)_60%,rgba(8,7,11,0.9)_100%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,7,11,0)_0%,rgba(8,7,11,0.5)_11%,rgba(8,7,11,0.2)_30%,rgba(8,7,11,0.34)_62%,rgba(8,7,11,0.9)_100%)]"
       />
 
       <div className="mx-auto w-full max-w-[1400px]">
