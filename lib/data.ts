@@ -177,14 +177,16 @@ export const EXPERIMENTS: Experiment[] = [
   { index: "E—05", title: "BACKTEST RIG", medium: "Trading strategies, simulated overnight", gradient: ["#26043a", "#ff6ad5"], image: "/img/Screenshot 2026-07-08 112603.png" },
   { index: "E—06", title: "THE OBSERVATORY", medium: "This website — 16,000 particles deep", gradient: ["#2d0a02", "#ff5c28"], image: "/img/Screenshot 2026-07-08 112400.png" },
 
-  /* ---- placeholders: the 3D builds, waiting on captures and links.
-     Each one renders its gradient until an `image` is added. Replace the
-     title and medium, drop in `image` and `href`, and the wall picks up the
-     new size, height and depth on its own. The word PLACEHOLDER is in the
-     visible caption on purpose — nothing here should ship as finished. ---- */
-  { index: "E—07", title: "APEX", medium: "Placeholder — 3D racing world", gradient: ["#2a0604", "#ff5c28"] },
-  { index: "E—08", title: "THE HALL", medium: "Placeholder — walkable 3D museum", gradient: ["#0e1024", "#c9a2ff"] },
-  { index: "E—09", title: "OVERCLOCK", medium: "Placeholder — cyberdeck interface", gradient: ["#02131b", "#3fd2c7"] },
+  /* ---- the 3D builds. Order here is the order along the wall, and the
+     column pattern gives every other one a bigger plate — so THE HALL takes
+     a wide slot and APEX the narrow one after it. Still no links: add `href`
+     to any of these and the plate becomes a visit. ---- */
+  { index: "E—07", title: "THE HALL", medium: "Portfolio as a walkable 3D museum", gradient: ["#150f07", "#d8b271"], image: "/img/lab-the-hall.webp" },
+  { index: "E—08", title: "APEX", medium: "Portfolio at racing pace — 3D garage", gradient: ["#2a0604", "#ff5c28"], image: "/img/lab-apex.webp" },
+  { index: "E—09", title: "OVERCLOCK", medium: "Cyber build — a 3D core in motion", gradient: ["#050b1e", "#6ea8ff"], image: "/img/lab-overclock.webp" },
+
+  /* ---- still placeholders: no capture yet. PLACEHOLDER is in the visible
+     caption on purpose, so neither can quietly ship as finished work. ---- */
   { index: "E—10", title: "MEADOW", medium: "Placeholder — 3D grass world you can walk", gradient: ["#0a1c08", "#8ede5a"] },
   { index: "E—11", title: "UNTITLED", medium: "Placeholder — next experiment", gradient: ["#15121d", "#9c96ff"] },
 ];

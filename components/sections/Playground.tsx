@@ -49,6 +49,18 @@ const PARALLAX = 0.45;
 
 const ASPECTS = ["4 / 3", "3 / 4", "1 / 1", "5 / 4", "4 / 5"];
 
+/**
+ * Titles are sized against their own plate rather than the viewport, and the
+ * limit is the longest *word*: wrapping cannot rescue a single long one, so
+ * THE OBSERVATORY ran off the narrow columns at any fixed size. Roughly
+ * 72cqw of room per character of the longest word, capped so short titles
+ * stay a sensible size.
+ */
+function titleSize(title: string) {
+  const longest = title.split(/\s+/).reduce((n, w) => Math.max(n, w.length), 1);
+  return `clamp(0.8rem, ${Math.min(8.4, 72 / longest).toFixed(2)}cqw, 3rem)`;
+}
+
 /** Slices the experiments into columns following the repeating pattern. */
 function toColumns(items: Experiment[]) {
   const out: { spec: Column; items: Experiment[] }[] = [];
@@ -92,7 +104,7 @@ function Plate({ e, aspect }: { e: Experiment; aspect: string }) {
   };
 
   const body = (
-    <figure data-lab-card className="group block w-full">
+    <figure data-lab-card className="group block w-full" style={{ containerType: "inline-size" }}>
       <figcaption className="mb-2 flex items-baseline gap-2 font-mono text-[9px] uppercase tracking-[0.26em] text-ink/60 transition-colors duration-300 group-hover:text-ink md:text-[10px]">
         <span className="shrink-0 text-ember">{e.index}</span>
         <span className="truncate">{e.medium}</span>
@@ -138,7 +150,10 @@ function Plate({ e, aspect }: { e: Experiment; aspect: string }) {
         />
 
         <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
-          <h3 className="font-display text-xl font-extrabold leading-none tracking-tight text-ink md:text-3xl">
+          <h3
+            className="font-display font-extrabold leading-[0.92] tracking-tight text-ink"
+            style={{ fontSize: titleSize(e.title) }}
+          >
             {e.title}
           </h3>
         </div>
