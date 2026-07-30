@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { world, NUM_SHAPES, SECTION_PALETTES, SECTION_OPACITY } from "@/lib/world";
+import { world, NUM_SHAPES, SHAPES, SECTION_PALETTES, SECTION_OPACITY } from "@/lib/world";
 import { markScale, sampleSignature } from "@/lib/signature";
 import { audio } from "@/lib/audio";
 
@@ -27,6 +27,7 @@ const LAB_FAR: [string, string] = ["#3fd2c7", "#ffd166"];
  */
 const LAB_SPAN = 26;
 const LAB_LANES = 7;
+const LAB_SHAPE = SHAPES.indexOf("playground");
 
 type ShapeFn = (i: number, count: number, out: THREE.Vector3) => void;
 
@@ -248,6 +249,20 @@ varying float vFade;
 
 ${NOISE}
 
+/**
+ * The lab's ribbons, slid along their own axis and wrapped at their span.
+ * Both waves baked into the formation complete a whole number of cycles over
+ * that distance, so a particle leaving one end lands on an identical part of
+ * the pattern: the flow never shows a seam.
+ */
+vec3 labFlow(vec3 p, float shift) {
+  float span = ${LAB_SPAN}.0;
+  p.x = mod(p.x + shift + span * 0.5, span) - span * 0.5;
+  p.y += sin(p.x * 0.24 + uLabClock * 0.6) * 0.28;
+  p.z += cos(p.x * 0.19 - uLabClock * 0.4) * 0.34;
+  return p;
+}
+
 void main() {
   float shapes = ${NUM_SHAPES}.0;
   float idx = floor(uBlend);
@@ -261,6 +276,15 @@ void main() {
   vec2 uvB = vec2(aRef.x, (aRef.y + min(idx + 1.0, shapes - 1.0)) / shapes);
   vec3 pA = texture2D(uShapes, uvA).xyz;
   vec3 pB = texture2D(uShapes, uvB).xyz;
+
+  // Stream the lab's own formation rather than the blended result. Applied
+  // to the blend, the accumulated shift has to unwind when the section
+  // releases — which drags the whole field sideways underneath the morph.
+  // Applied to the formation, leaving the lab is a pure shape change: the
+  // ribbons simply become the next thing.
+  float labShift = uLabFlow * 44.0 + uLabClock;
+  if (abs(idx - ${LAB_SHAPE}.0) < 0.5) pA = labFlow(pA, labShift);
+  if (abs(min(idx + 1.0, shapes - 1.0) - ${LAB_SHAPE}.0) < 0.5) pB = labFlow(pB, labShift);
 
   // Shape 0 is the personal mark: unrevealed particles hang as loose
   // dust before a horizontal wave resolves the letterforms.
@@ -282,21 +306,6 @@ void main() {
   }
 
   vec3 pos = mix(pA, pB, t);
-
-  // the lab's ribbons stream past as you travel the wall. The whole field
-  // slides along X and wraps at the span; because the ribbon pattern is
-  // periodic over exactly that distance, a particle leaving one end reappears
-  // on an identical part of the pattern and the flow never shows a seam.
-  // Scaling the shift by uLabAmt means it grows from nothing on the way in,
-  // so there is nothing to cross-fade and nothing to tear.
-  if (uLabAmt > 0.001) {
-    float span = 26.0;
-    float shift = (uLabFlow * 44.0 + uLabClock) * uLabAmt;
-    pos.x = mod(pos.x + shift + span * 0.5, span) - span * 0.5;
-    // and the ribbons breathe across their own length
-    pos.y += sin(pos.x * 0.24 + uLabClock * 0.6) * 0.28 * uLabAmt;
-    pos.z += cos(pos.x * 0.19 - uLabClock * 0.4) * 0.34 * uLabAmt;
-  }
 
   // idle breathing — the formation is never still
   float n1 = snoise(pos * 0.32 + uTime * 0.055);

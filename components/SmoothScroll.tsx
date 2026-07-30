@@ -58,11 +58,18 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       const max = document.documentElement.scrollHeight - window.innerHeight;
       world.scroll = max > 0 ? scrollY / max : 0;
       world.scrollVel = velocity;
-      // a pinned section keeps taking scroll while staying put, so the blend
+      // A pinned section keeps taking scroll while staying put, so the blend
       // would drift off its own formation halfway along the wall. Hold it
-      // there for the whole traverse — the lab keeps its own background.
-      world.blend =
-        world.labActive && labShape >= 0 ? labShape : computeBlend(scrollY);
+      // there — but hand back over the last stretch of the track rather than
+      // at the moment the pin releases, or the formation lurches a whole
+      // half-section in one frame on the way out.
+      const natural = computeBlend(scrollY);
+      if (world.labActive && labShape >= 0) {
+        const handover = Math.min(1, Math.max(0, (world.labProgress - 0.84) / 0.16));
+        world.blend = labShape + (natural - labShape) * handover * handover;
+      } else {
+        world.blend = natural;
+      }
     };
 
     /* ---- Lenis ---- */
