@@ -248,7 +248,7 @@ export default function Playground() {
     const mid = window.innerWidth / 2;
     for (const s of setters.current) s.set((s.centre + x - mid) * (s.depth - 1) * PARALLAX);
     bg.current.rules?.(x * 0.35);
-    bg.current.ghost?.(x * 0.12);
+    bg.current.ghost?.(x * 0.045);
 
     world.labProgress = t;
 
@@ -379,12 +379,17 @@ export default function Playground() {
           WebkitMaskImage: "linear-gradient(to bottom, transparent, #000 14%, #000 84%, transparent)",
         }}
       >
-        <span
-          ref={ghostRef}
-          className="absolute left-[8vw] top-1/2 -translate-y-1/2 whitespace-nowrap font-display text-[34vw] font-extrabold leading-none tracking-tighter text-ink/[0.035] will-change-transform"
-        >
-          THE LAB
-        </span>
+        {/* the section's name, ghosted behind the wall. Sized to fit the
+            screen and centred: anchored left at 34vw it ran off the right
+            edge and only ever showed THE. */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span
+            ref={ghostRef}
+            className="whitespace-nowrap font-display text-[12vw] font-extrabold leading-none tracking-tighter text-ink/[0.045] will-change-transform"
+          >
+            THE LAB
+          </span>
+        </div>
         <div
           ref={rulesRef}
           className="absolute inset-y-0 left-0 w-[400vw] will-change-transform"
