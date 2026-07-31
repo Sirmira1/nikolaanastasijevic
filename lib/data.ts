@@ -198,3 +198,146 @@ export const SOCIALS = [
 ];
 
 export const EMAIL = "nikolaanastasijevic0@gmail.com";
+
+/* ------------------------------------------------------------------ */
+/*  The other rooms — /off-work, /on-work, /store                      */
+/* ------------------------------------------------------------------ */
+
+/** Every page below the home page, in the order they appear in the footer. */
+export const PAGES = [
+  { href: "/", label: "Home", note: "The signature, the work, the lab" },
+  { href: "/off-work", label: "Off Work", note: "Cars, mountains, everything else" },
+  { href: "/on-work", label: "On Work", note: "What I actually do all day" },
+  { href: "/store", label: "Store", note: "Opening soon" },
+];
+
+/**
+ * The four things I am, in the order the page walks through them. `image` is
+ * where a photo goes — until one is dropped in, the frame names the file it
+ * wants, so nothing ships looking finished when it is not.
+ */
+export type Obsession = {
+  key: string;
+  label: string;
+  lead: string;
+  tags: string[];
+  image: string;
+  accent: string;
+};
+
+export const OBSESSIONS: Obsession[] = [
+  {
+    key: "cars",
+    label: "CARS",
+    lead: "American muscle, mostly. Corvettes and Hellcats — the loud, unreasonable end of the catalogue.",
+    tags: ["Corvette", "Hellcat", "Build it yourself", "Drag", "Track"],
+    image: "/img/off/cars.jpg",
+    accent: "#ff5c28",
+  },
+  {
+    key: "outside",
+    label: "OUTSIDE",
+    lead: "Snowboarding in winter, a pack and a trail the rest of the year.",
+    tags: ["Snowboarding", "Camping", "Backpacking"],
+    image: "/img/off/outside.jpg",
+    accent: "#6ea8ff",
+  },
+  {
+    key: "training",
+    label: "TRAINING",
+    lead: "Calisthenics. Your own bodyweight is the only equipment that never lets you skip leg day.",
+    tags: ["Calisthenics", "Sports"],
+    image: "/img/off/training.jpg",
+    accent: "#3fd2c7",
+  },
+  {
+    key: "screens",
+    label: "SCREENS",
+    lead: "Photography, gaming, and building things nobody asked for at two in the morning.",
+    tags: ["Photography", "Gaming", "Side projects"],
+    image: "/img/off/screens.jpg",
+    accent: "#c9a2ff",
+  },
+];
+
+/** Everything I watch. Two wheels, four wheels, tarmac, dirt, quarter mile. */
+export const RACING = [
+  { series: "Formula 1", note: "Sunday, non-negotiable" },
+  { series: "MotoGP", note: "Two wheels, no margin" },
+  { series: "IndyCar", note: "Ovals and street circuits" },
+  { series: "WEC", note: "Hypercars, all night" },
+  { series: "GT3", note: "The best racing nobody watches" },
+  { series: "Rally", note: "Gravel, snow, no run-off" },
+  { series: "Drag", note: "Four seconds, then it is over" },
+];
+
+/** The garage side of it — not just watching. */
+export const GARAGE = [
+  { title: "Building", note: "Turning wrenches beats reading about turning wrenches." },
+  { title: "American V8", note: "Corvettes and Hellcats. Displacement over subtlety." },
+  { title: "Track days", note: "Where the build gets its report card." },
+];
+
+/**
+ * The rest, in a grid. Short by design — nobody reads a wall of text about
+ * somebody else's weekends.
+ */
+export const HOBBIES = [
+  { title: "Snowboarding", note: "Winter has one job.", image: "/img/off/snowboard.jpg" },
+  { title: "Camping", note: "Backpack, trail, no signal.", image: "/img/off/camping.jpg" },
+  { title: "Calisthenics", note: "Bodyweight, every day.", image: "/img/off/calisthenics.jpg" },
+  { title: "Photography", note: "Mostly cars. Occasionally not.", image: "/img/off/photo.jpg" },
+  { title: "Gaming", note: "Sim racing counts as practice.", image: "/img/off/gaming.jpg" },
+  { title: "Sports", note: "Watch everything, play most of it.", image: "/img/off/sports.jpg" },
+];
+
+/**
+ * The hand of cards at the bottom. Fill in the two marked TODO before this
+ * goes live — they point nowhere until you do.
+ */
+export const SOCIAL_CARDS = [
+  { label: "Instagram", handle: "@TODO", href: "#", tint: "#ff6ad5", todo: true },
+  { label: "Spotify", handle: "TODO", href: "#", tint: "#3fd2c7", todo: true },
+  { label: "GitHub", handle: "Sirmira1", href: "https://github.com/Sirmira1", tint: "#ece7df" },
+  {
+    label: "LinkedIn",
+    handle: "nikola-anastasijevic",
+    href: "https://linkedin.com/in/nikola-anastasijevic-a737632ba/",
+    tint: "#6ea8ff",
+  },
+  { label: "Email", handle: EMAIL, href: `mailto:${EMAIL}`, tint: "#ff5c28" },
+];
+
+/** /on-work — what the job actually is. */
+export const CAPABILITIES = [
+  {
+    index: "01",
+    title: "Full stack",
+    note: "Interface to database to deployment. One person, the whole path, which is why the seams line up.",
+    items: ["React / Next.js", "TypeScript", "Node", ".NET / Laravel", "MySQL / Supabase"],
+  },
+  {
+    index: "02",
+    title: "Design",
+    note: "I draw it before I build it. A product that works and looks like an afterthought is still an afterthought.",
+    items: ["Interface design", "Motion", "3D / WebGL", "Design systems"],
+  },
+  {
+    index: "03",
+    title: "Apps",
+    note: "Mobile and web, shipped to real people with real accounts and real money moving through them.",
+    items: ["React Native", "Swift", "Payments", "Auth"],
+  },
+  {
+    index: "04",
+    title: "AI",
+    note: "Using it daily and building with it — models wired into products, not demos.",
+    items: ["LLM features", "Agents / tooling", "Prompt + eval work"],
+  },
+  {
+    index: "05",
+    title: "Learning",
+    note: "Every project picks a thing I cannot do yet. That is the point of the project.",
+    items: ["New stacks", "New languages", "Whatever the build needs"],
+  },
+];

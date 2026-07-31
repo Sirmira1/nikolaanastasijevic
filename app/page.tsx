@@ -18,6 +18,7 @@ import Skills from "@/components/sections/Skills";
 import Career from "@/components/sections/Career";
 import Playground from "@/components/sections/Playground";
 import Contact from "@/components/sections/Contact";
+import PageNav from "@/components/PageNav";
 
 // the WebGL world is client-only and code-split away from first paint
 const Scene = dynamic(() => import("@/components/gl/Scene"), { ssr: false });
@@ -46,6 +47,7 @@ export default function Home() {
         <Career />
         <Playground />
         <Contact />
+        <PageNav />
       </main>
     </SmoothScroll>
   );

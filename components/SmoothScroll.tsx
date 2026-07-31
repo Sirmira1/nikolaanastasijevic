@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { world } from "@/lib/world";
+import { world, NUM_SHAPES } from "@/lib/world";
 import { calmMode } from "@/lib/calm";
 
 declare global {
@@ -32,7 +32,12 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     let centers: number[] = [];
     /** which formation belongs to the pinned horizontal section */
     let labShape = -1;
+    /** pages other than home start further along the formation list */
+    let shapeBase = 0;
     const measure = () => {
+      shapeBase = Number(
+        document.querySelector<HTMLElement>("[data-shape-base]")?.dataset.shapeBase ?? 0
+      );
       const shapes = Array.from(document.querySelectorAll<HTMLElement>("[data-shape]"));
       labShape = shapes.findIndex((el) => el.id === "lab");
       centers = shapes.map((el) => {
@@ -63,7 +68,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       // there — but hand back over the last stretch of the track rather than
       // at the moment the pin releases, or the formation lurches a whole
       // half-section in one frame on the way out.
-      const natural = computeBlend(scrollY);
+      const natural = Math.min(shapeBase + computeBlend(scrollY), NUM_SHAPES - 1);
       if (world.labActive && labShape >= 0) {
         const handover = Math.min(1, Math.max(0, (world.labProgress - 0.84) / 0.16));
         world.blend = labShape + (natural - labShape) * handover * handover;
