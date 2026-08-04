@@ -13,7 +13,18 @@ export const SHAPES = [
   "career",
   "playground",
   "contact",
+  // the off-work page: one formation per hobby, sampled from the silhouettes
+  "car",
+  "snowboard",
+  "tent",
+  "rings",
+  "camera",
+  "controller",
+  "football",
 ] as const;
+
+/** where the hobby silhouettes begin in SHAPES */
+export const HOBBY_SHAPE = SHAPES.indexOf("car");
 
 export type ShapeName = (typeof SHAPES)[number];
 
@@ -29,10 +40,23 @@ export const SECTION_PALETTES: [string, string][] = [
   ["#c9a2ff", "#7c5cff"], // career  — violet ascent
   ["#ff6ad5", "#ffd166"], // playground — magenta/gold chaos
   ["#ff5c28", "#fff3ea"], // contact — portal
+  // the hobby silhouettes; the page overrides these with each subject's own
+  // accent as it comes round, so these are only what they fall back to
+  ["#ff5c28", "#ffd9c2"], // car
+  ["#6ea8ff", "#dfe8ff"], // snowboard
+  ["#8ede5a", "#d9ffc2"], // tent
+  ["#3fd2c7", "#c3fff4"], // rings
+  ["#c9a2ff", "#efe4ff"], // camera
+  ["#ff6ad5", "#ffd166"], // controller
+  ["#ffb454", "#ffe9c2"], // football
 ];
 
 /** Particle field opacity per section — the world recedes while you read. */
-export const SECTION_OPACITY = [1, 1, 0.55, 0.4, 0.34, 0.45, 0.58, 0.95];
+export const SECTION_OPACITY = [
+  1, 1, 0.55, 0.4, 0.34, 0.45, 0.58, 0.95,
+  // the silhouettes are the subject of their page, so they carry
+  0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
+];
 
 /** Camera keyframes per section: position + lookAt. */
 export const CAMERA_KEYS: { pos: [number, number, number]; look: [number, number, number] }[] = [
@@ -44,6 +68,14 @@ export const CAMERA_KEYS: { pos: [number, number, number]; look: [number, number
   { pos: [0.4, 2.6, 9.5], look: [0, 0.6, 0] }, // career — looking up the stream
   { pos: [0, -0.8, 13.0], look: [0, 0, 0] },   // playground — pulled back
   { pos: [0, 0, 7.2], look: [0, 0, 0] },       // contact — flying into the ring
+  // dead-on for every silhouette: an object only reads square to the camera
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // car
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // snowboard
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // tent
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // rings
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // camera
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // controller
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // football
 ];
 
 type WorldState = {
@@ -67,6 +99,12 @@ type WorldState = {
   labActive: boolean;
   /** how far through that track, 0..1 — the field turns with it */
   labProgress: number;
+  /**
+   * When set, the field follows this formation index instead of working it
+   * out from the page's sections — a pinned section that steps through
+   * several formations of its own needs to drive the blend directly.
+   */
+  blendLock: number | null;
   /** last click: NDC coords + timestamp (s) + power (1 = click, >1 = boom) */
   clickAt: { x: number; y: number; t: number; power: number };
   /** queued visitor-signature strokes (world-space xyz triplets) for the trail system */
@@ -89,6 +127,7 @@ export const world: WorldState = {
   accent: null,
   labActive: false,
   labProgress: 0,
+  blendLock: null,
   clickAt: { x: 0, y: 0, t: -100, power: 0 },
   markQueue: [],
   started: false,

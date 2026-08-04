@@ -69,7 +69,10 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       // at the moment the pin releases, or the formation lurches a whole
       // half-section in one frame on the way out.
       const natural = Math.min(shapeBase + computeBlend(scrollY), NUM_SHAPES - 1);
-      if (world.labActive && labShape >= 0) {
+      if (world.blendLock !== null) {
+        // a section is driving the field itself
+        world.blend = Math.max(0, Math.min(world.blendLock, NUM_SHAPES - 1));
+      } else if (world.labActive && labShape >= 0) {
         const handover = Math.min(1, Math.max(0, (world.labProgress - 0.84) / 0.16));
         world.blend = labShape + (natural - labShape) * handover * handover;
       } else {

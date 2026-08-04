@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { GARAGE, HOBBIES, OBSESSIONS, RACING, SOCIAL_CARDS } from "@/lib/data";
-import { world } from "@/lib/world";
+import { GARAGE, OBSESSIONS, RACING, SOCIAL_CARDS } from "@/lib/data";
+import { world, HOBBY_SHAPE } from "@/lib/world";
 import { calmMode } from "@/lib/calm";
 import { SectionLabel, Rise, RevealLines, Line } from "@/components/ui/Split";
 import Frame from "@/components/ui/Frame";
@@ -16,11 +16,19 @@ gsap.registerPlugin(ScrollTrigger);
 /* ------------------------------------------------------------------ */
 
 /**
- * A pinned stage that steps through the four things I am. The photo and the
- * word change together, and each one hands its colour to the particle field
- * behind the page, so the world changes with the subject rather than just
- * sitting there.
+ * A pinned stage that steps through everything I am into. The word, the photo
+ * and — the point of the whole thing — the particle field change together:
+ * the field is holding a silhouette of the subject, so scrolling into cars
+ * builds a race car out of the stars, camping builds a tent, gaming builds a
+ * controller.
+ *
+ * Each subject holds its shape for most of its span and only morphs near the
+ * boundary, so the field is actually *being* the object rather than smearing
+ * between two of them the whole way down. The word flips mid-morph, so it and
+ * the shape land together.
  */
+const HOLD = 0.74;
+
 function Cycle() {
   const sectionRef = useRef<HTMLElement>(null);
   const [at, setAt] = useState(0);
@@ -35,20 +43,34 @@ function Cycle() {
     if (!section) return;
 
     const ctx = gsap.context(() => {
+      const n = OBSESSIONS.length;
       ScrollTrigger.create({
         trigger: section,
         start: "top top",
         end: "bottom bottom",
         onUpdate: (self) => {
-          const step = Math.min(
-            OBSESSIONS.length - 1,
-            Math.floor(self.progress * OBSESSIONS.length)
-          );
-          setAt(step);
+          const local = Math.min(self.progress * n, n - 0.0001);
+          const step = Math.floor(local);
+          const frac = local - step;
+          // hold, then morph over the last stretch of each subject's span
+          const morph = frac <= HOLD ? 0 : (frac - HOLD) / (1 - HOLD);
+          const eased = morph * morph * (3 - 2 * morph);
+
+          world.blendLock = Math.min(HOBBY_SHAPE + step + eased, HOBBY_SHAPE + n - 1);
+          world.blend = world.blendLock;
+
+          // the word changes halfway through the morph, with the shape
+          setAt(Math.min(n - 1, step + (eased > 0.5 ? 1 : 0)));
+        },
+        onToggle: (self) => {
+          if (!self.isActive) world.blendLock = null;
         },
       });
     }, section);
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      world.blendLock = null;
+    };
   }, []);
 
   // the field takes the colour of whatever is on screen
@@ -81,7 +103,7 @@ function Cycle() {
       ref={sectionRef}
       data-shape
       aria-label="What I am into"
-      className="relative h-[380vh]"
+      className="relative h-[640vh]"
     >
       <div className="sticky top-0 flex h-[100svh] items-center px-5 md:px-10">
         <div className="mx-auto grid w-full max-w-[1400px] items-center gap-10 md:grid-cols-[1.2fr_1fr] md:gap-14">
@@ -316,30 +338,6 @@ export default function OffWork() {
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* everything else, briefly */}
-      <section
-        data-shape
-        aria-label="Everything else"
-        className="relative px-5 py-[16vh] md:px-10"
-      >
-        <div className="section-veil" aria-hidden="true" />
-        <div className="mx-auto max-w-[1400px]">
-          <SectionLabel index="02" title="The rest of it" />
-
-          <div className="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-            {HOBBIES.map((h, i) => (
-              <Rise key={h.title} delay={i * 0.04} className="group">
-                <Frame src={h.image} alt={h.title} aspect="1 / 1" />
-                <h3 className="mt-4 font-display text-2xl font-bold tracking-tight text-ink">
-                  {h.title}
-                </h3>
-                <p className="mt-1 font-mono text-xs leading-relaxed text-dim">{h.note}</p>
-              </Rise>
-            ))}
           </div>
         </div>
       </section>

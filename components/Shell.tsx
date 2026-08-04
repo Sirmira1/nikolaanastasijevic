@@ -1,7 +1,8 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import dynamic from "next/dynamic";
+import { world } from "@/lib/world";
 import SmoothScroll from "@/components/SmoothScroll";
 import Cursor from "@/components/Cursor";
 import Header from "@/components/Header";
@@ -28,6 +29,13 @@ export default function Shell({
   children: ReactNode;
   shapeBase?: number;
 }) {
+  // the preloader is what tells the world to assemble, and it only runs on
+  // the home page — without this the field stays scattered on its distant
+  // shell here and never arrives
+  useEffect(() => {
+    world.started = true;
+  }, []);
+
   return (
     <SmoothScroll>
       <Scene />
