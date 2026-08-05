@@ -17,6 +17,7 @@ function Cycle() {
       items={OBSESSIONS}
       shapeBase={HOBBY_SHAPE}
       label="What I am into"
+      bookends
       aside={(o, i) => (
         <Frame src={o.image} alt={o.label} aspect="4 / 3" className="h-full" priority={i === 0} />
       )}
@@ -163,19 +164,19 @@ export default function OffWork() {
         aria-label="Off work"
         className="relative flex min-h-[92svh] flex-col justify-end px-5 pb-[10vh] pt-[24vh] md:px-10"
       >
-        <div className="section-veil" aria-hidden="true" />
+        <div className="section-veil-soft" aria-hidden="true" />
         <div className="mx-auto w-full max-w-[1400px]">
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-ember">
             Off work
           </span>
-          <RevealLines className="mt-6 font-display text-[13vw] font-extrabold leading-[0.92] tracking-tight text-ink md:text-[8vw]">
+          <RevealLines className="on-field mt-6 font-display text-[13vw] font-extrabold leading-[0.92] tracking-tight text-ink md:text-[8vw]">
             <Line>WHAT I DO</Line>
             <Line>
               WHEN <span className="font-serif font-normal italic text-ember">nobody</span>
             </Line>
             <Line>IS PAYING</Line>
           </RevealLines>
-          <p className="mt-10 max-w-xl font-mono text-sm leading-relaxed text-ink/80 md:text-base">
+          <p className="on-field mt-10 max-w-xl font-mono text-sm leading-relaxed text-ink md:text-base">
             Cars first, and it is not close. Then whatever gets me outside, off
             the ground, or into something I have not tried yet.
           </p>
@@ -188,18 +189,18 @@ export default function OffWork() {
         aria-label="Cars"
         className="relative px-5 py-[16vh] md:px-10"
       >
-        <div className="section-veil" aria-hidden="true" />
+        <div className="section-veil-soft" aria-hidden="true" />
         <div className="mx-auto max-w-[1400px]">
           <SectionLabel index="01" title="Cars — the loud one" />
 
           <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
             <div>
-              <h2 className="font-display text-[9vw] font-extrabold leading-[0.95] tracking-tight text-ink md:text-[4.4vw]">
+              <h2 className="on-field font-display text-[9vw] font-extrabold leading-[0.95] tracking-tight text-ink md:text-[4.4vw]">
                 AMERICAN
                 <br />
                 <span className="text-ember">MUSCLE</span>
               </h2>
-              <p className="mt-8 max-w-lg font-mono text-sm leading-relaxed text-ink/80">
+              <p className="on-field mt-8 max-w-lg font-mono text-sm leading-relaxed text-ink">
                 Corvettes and Hellcats — the unreasonable end of the catalogue.
                 I would rather build one than buy one finished, and I would
                 rather drive it than photograph it. Usually I do all three.

@@ -108,6 +108,33 @@ body {
   );
 }
 
+/*
+ * For sections where the field is the subject rather than the backdrop. The
+ * full veil is sized to protect dense body copy over a loose cloud; laid over
+ * a silhouette it erases the thing the section is there to show. Type that
+ * sits on this carries its own shadow instead.
+ */
+.section-veil-soft {
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(8, 7, 11, 0.4) 18%,
+    rgba(8, 7, 11, 0.4) 82%,
+    transparent
+  );
+}
+
+/* enough to hold a headline together over a lit particle field */
+.on-field {
+  text-shadow:
+    0 2px 20px rgba(8, 7, 11, 1),
+    0 0 44px rgba(8, 7, 11, 0.92);
+}
+
 /* ---- utility: mask reveal for split lines ---- */
 .line-mask {
   display: block;

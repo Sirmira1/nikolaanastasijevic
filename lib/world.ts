@@ -13,7 +13,11 @@ export const SHAPES = [
   "career",
   "playground",
   "contact",
-  // the off-work page: one formation per hobby, sampled from the silhouettes
+  // the off-work page. The bookends sit either side of the hobby run on
+  // purpose: the field blends between *consecutive* rows of the shape atlas,
+  // so a handover to a formation further along the list would smear through
+  // every shape in between on the way.
+  "muscle",
   "car",
   "snowboard",
   "tent",
@@ -21,6 +25,7 @@ export const SHAPES = [
   "camera",
   "controller",
   "football",
+  "flag",
   // the on-work page: one formation per capability
   "stack",
   "nib",
@@ -31,6 +36,10 @@ export const SHAPES = [
 
 /** where the hobby silhouettes begin in SHAPES */
 export const HOBBY_SHAPE = SHAPES.indexOf("car");
+
+/** what the off-work page opens and closes on, either side of the hobbies */
+export const OFF_OPEN_SHAPE = SHAPES.indexOf("muscle");
+export const OFF_CLOSE_SHAPE = SHAPES.indexOf("flag");
 
 /** where the on-work silhouettes begin in SHAPES */
 export const WORK_SHAPE = SHAPES.indexOf("stack");
@@ -51,6 +60,7 @@ export const SECTION_PALETTES: [string, string][] = [
   ["#ff5c28", "#fff3ea"], // contact — portal
   // the hobby silhouettes; the page overrides these with each subject's own
   // accent as it comes round, so these are only what they fall back to
+  ["#ff5c28", "#ffd9c2"], // muscle
   ["#ff5c28", "#ffd9c2"], // car
   ["#6ea8ff", "#dfe8ff"], // snowboard
   ["#8ede5a", "#d9ffc2"], // tent
@@ -58,6 +68,7 @@ export const SECTION_PALETTES: [string, string][] = [
   ["#c9a2ff", "#efe4ff"], // camera
   ["#ff6ad5", "#ffd166"], // controller
   ["#ffb454", "#ffe9c2"], // football
+  ["#ece7df", "#ffffff"], // flag — the finish, in plain ink
   // the capability silhouettes, likewise overridden by the page
   ["#6ea8ff", "#dfe8ff"], // stack
   ["#c9a2ff", "#efe4ff"], // nib
@@ -70,7 +81,7 @@ export const SECTION_PALETTES: [string, string][] = [
 export const SECTION_OPACITY = [
   1, 1, 0.55, 0.4, 0.34, 0.45, 0.58, 0.95,
   // the silhouettes are the subject of their page, so they carry
-  0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
+  0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
   0.9, 0.9, 0.9, 0.9, 0.9,
 ];
 
@@ -85,6 +96,7 @@ export const CAMERA_KEYS: { pos: [number, number, number]; look: [number, number
   { pos: [0, -0.8, 13.0], look: [0, 0, 0] },   // playground — pulled back
   { pos: [0, 0, 7.2], look: [0, 0, 0] },       // contact — flying into the ring
   // dead-on for every silhouette: an object only reads square to the camera
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // muscle
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // car
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // snowboard
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // tent
@@ -92,6 +104,7 @@ export const CAMERA_KEYS: { pos: [number, number, number]; look: [number, number
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // camera
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // controller
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // football
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // flag
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // stack
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // nib
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // phone

@@ -23,30 +23,94 @@ export type Silhouette = {
 };
 
 export const SILHOUETTES: Silhouette[] = [
+  /* ---------------------------------------------------------------- */
+  /*  The bookends of the off-work page                                */
+  /* ---------------------------------------------------------------- */
+
+  {
+    key: "muscle",
+    /*
+     * What the page opens on, over the American Muscle section. A long hood,
+     * a fastback roof and haunches — deliberately not the formula car, which
+     * belongs to the cycle a screen further down.
+     */
+    box: [300, 112],
+    art: `
+      <path
+        d="M10 80 L13 62 Q40 54 106 52 L142 28 L198 28 L258 56
+           Q283 58 293 64 L293 82 L10 82 Z"
+      />
+      <!-- the scoop is half the reason it reads as muscle -->
+      <rect x="44" y="44" width="38" height="10" rx="4"/>
+      <circle cx="76" cy="82" r="24"/>
+      <circle cx="232" cy="82" r="26"/>
+    `,
+    holes: `<path d="M120 50 L150 33 L192 33 L214 50 Z"/>`,
+  },
+  {
+    key: "flag",
+    /*
+     * What the page closes on, over the racing section: the finish. The
+     * squares are punched straight rather than following the wave — the fly
+     * clips them where it falls away, which is what a flag does anyway.
+     */
+    box: [300, 200],
+    art: `
+      <rect x="14" y="8" width="13" height="186" rx="5"/>
+      <path
+        d="M27 26 Q88 6 148 28 Q208 50 268 26 L268 116
+           Q208 140 148 118 Q88 96 27 116 Z"
+      />
+    `,
+    holes: `
+      <rect x="40" y="30" width="38" height="30"/>
+      <rect x="116" y="30" width="38" height="30"/>
+      <rect x="192" y="30" width="38" height="30"/>
+      <rect x="78" y="60" width="38" height="30"/>
+      <rect x="154" y="60" width="38" height="30"/>
+      <rect x="230" y="60" width="38" height="30"/>
+      <rect x="40" y="90" width="38" height="30"/>
+      <rect x="116" y="90" width="38" height="30"/>
+      <rect x="192" y="90" width="38" height="30"/>
+    `,
+  },
+
   {
     key: "car",
-    box: [260, 112],
+    /*
+     * A formula car, side on. The wheels have to be the biggest things in it
+     * and they have to stand clear of the body — an earlier draft had them
+     * swallowed by the floor and a rear wing heavy enough to read as a pistol
+     * grip instead of a car.
+     */
+    box: [300, 132],
     art: `
-      <!-- floor and lower body -->
-      <path d="M30 80 L64 80 Q72 64 96 60 L134 54 Q146 38 170 38 L190 38 Q198 50 210 57 L228 64 L228 80 Z"/>
-      <!-- nose cone, deep enough to read at particle scale -->
-      <path d="M6 62 Q36 56 70 58 L70 80 L8 80 Z"/>
-      <!-- front wing -->
-      <rect x="0" y="70" width="48" height="11" rx="4"/>
-      <rect x="2" y="56" width="12" height="18" rx="3"/>
-      <!-- cockpit and halo -->
-      <path d="M132 50 Q150 32 178 36 L180 44 Q154 40 140 54 Z"/>
-      <!-- airbox -->
-      <path d="M170 38 L184 18 L196 21 L194 42 Z"/>
-      <!-- engine cover sweeping back -->
-      <path d="M194 40 L230 56 L230 68 L192 52 Z"/>
-      <!-- rear wing: main plane, upper flap, endplate -->
-      <rect x="206" y="14" width="52" height="12" rx="4"/>
-      <rect x="212" y="32" width="44" height="9" rx="4"/>
-      <rect x="240" y="12" width="11" height="52" rx="3"/>
-      <!-- wheels -->
-      <circle cx="72" cy="80" r="25"/>
-      <circle cx="206" cy="80" r="28"/>
+      <!-- wheels first: they are what says open-wheel -->
+      <circle cx="76" cy="92" r="27"/>
+      <circle cx="230" cy="92" r="31"/>
+      <!-- floor, joining the axles low and thin -->
+      <rect x="62" y="86" width="176" height="13" rx="4"/>
+      <!-- nose, tapering to the front wing -->
+      <path d="M12 80 L64 70 L64 92 L12 92 Z"/>
+      <!-- front wing and its endplate -->
+      <rect x="0" y="90" width="56" height="11" rx="4"/>
+      <rect x="0" y="72" width="11" height="29" rx="3"/>
+      <!-- monocoque and sidepod -->
+      <path d="M62 70 L150 63 L196 70 L232 80 L232 90 L62 90 Z"/>
+      <!-- halo over the cockpit -->
+      <path d="M138 62 Q158 45 186 50 L188 58 Q163 53 148 67 Z"/>
+      <!-- airbox and engine cover falling away to the back -->
+      <path d="M186 50 L198 26 L212 31 L212 60 Z"/>
+      <path d="M210 33 L250 62 L250 75 L208 55 Z"/>
+      <!--
+        Rear wing: the plane sits over the tyre and is carried down to the
+        engine cover on a pylon. Floated off to the right on its own, with a
+        beam wing under it, the three bars read as a bracket rather than as a
+        wing.
+      -->
+      <rect x="216" y="26" width="76" height="13" rx="4"/>
+      <rect x="246" y="36" width="13" height="27" rx="4"/>
+      <rect x="279" y="22" width="13" height="45" rx="4"/>
     `,
   },
   {

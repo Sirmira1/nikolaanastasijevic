@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { world, NUM_SHAPES, SHAPES, HOBBY_SHAPE, SECTION_PALETTES, SECTION_OPACITY } from "@/lib/world";
+import { world, NUM_SHAPES, SHAPES, SECTION_PALETTES, SECTION_OPACITY } from "@/lib/world";
 import { markScale, sampleSignature } from "@/lib/signature";
 import { SILHOUETTES, sampleSilhouette } from "@/lib/silhouettes";
 import { audio } from "@/lib/audio";
@@ -499,24 +499,34 @@ export default function Particles() {
   }, [count, geometry, material]);
 
   /**
-   * The hobby silhouettes, sampled after first paint. Seven rasterises and
-   * scans is a few hundred milliseconds of main thread — worth waiting for
-   * an idle moment rather than spending it while the page is arriving.
+   * The silhouettes, sampled after first paint. A dozen rasterises and scans
+   * is a few hundred milliseconds of main thread — worth waiting for an idle
+   * moment rather than spending it while the page is arriving.
+   *
+   * Each one is written to the slot its own key names, not to an offset from
+   * the first: the two lists are edited independently, and a shape inserted
+   * into the middle of SHAPES used to silently shift every silhouette after
+   * it onto the wrong formation.
    */
   useEffect(() => {
     let active = true;
     const run = async () => {
       const texture = material.uniforms.uShapes.value as THREE.DataTexture;
       const data = texture.image.data as Float32Array;
-      for (let i = 0; i < SILHOUETTES.length; i++) {
+      for (const silhouette of SILHOUETTES) {
         if (!active) return;
+        const slot = (SHAPES as readonly string[]).indexOf(silhouette.key);
+        if (slot < 0) {
+          console.error("Silhouette has no formation in SHAPES", silhouette.key);
+          continue;
+        }
         try {
-          const points = await sampleSilhouette(SILHOUETTES[i], count);
+          const points = await sampleSilhouette(silhouette, count);
           if (!active) return;
-          writeShape(data, points, count, HOBBY_SHAPE + i);
+          writeShape(data, points, count, slot);
           texture.needsUpdate = true;
         } catch (error) {
-          console.error("Could not sample silhouette", SILHOUETTES[i].key, error);
+          console.error("Could not sample silhouette", silhouette.key, error);
         }
       }
     };

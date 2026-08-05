@@ -35,6 +35,7 @@ export default function ShapeCycle<T extends CycleItem>({
   label,
   aside,
   asideAspect = "4 / 3",
+  bookends = false,
   fallback,
 }: {
   items: readonly T[];
@@ -42,6 +43,15 @@ export default function ShapeCycle<T extends CycleItem>({
   shapeBase: number;
   /** what the section is called, for anyone not looking at it */
   label: string;
+  /**
+   * Hand over to the formations either side of this run — `shapeBase - 1`
+   * above the cycle and `shapeBase + items.length` below it — so the page
+   * opens and closes on something of its own instead of parking on the
+   * cycle's first and last subjects. Those two slots must sit immediately
+   * either side of the run in SHAPES, because the field only ever blends
+   * between consecutive formations.
+   */
+  bookends?: boolean;
   /** the right-hand column, rendered once per subject and cross-faded */
   aside: (item: T, i: number) => ReactNode;
   asideAspect?: string;
@@ -51,6 +61,7 @@ export default function ShapeCycle<T extends CycleItem>({
   const sectionRef = useRef<HTMLElement>(null);
   const wordRef = useRef<HTMLDivElement>(null);
   const [at, setAt] = useState(0);
+  const [onBookend, setOnBookend] = useState(false);
   const [reduced, setReduced] = useState(false);
 
   /**
@@ -121,6 +132,41 @@ export default function ShapeCycle<T extends CycleItem>({
       const travel = Math.max(rect.height - vh, 1);
       const p = Math.max(0, Math.min(-rect.top / travel, 1));
 
+      /*
+       * Above and below the cycle the field holds a formation of the page's
+       * own, and trades into the run over the last screen of approach either
+       * side. Both handovers are one step of blend, which is the only kind the
+       * field can make cleanly — hence the adjacency the prop documents.
+       */
+      if (bookends && rect.top > 0) {
+        // over the last screen of approach, or over whatever the page has
+        // above the cycle if that is less than a screen
+        const span = Math.min(vh, Math.max(1, rect.top + window.scrollY));
+        world.blendLock = shapeBase - 1 + (1 - Math.min(rect.top / span, 1));
+        world.blend = world.blendLock;
+        setAt(0);
+        setOnBookend(true);
+        return;
+      }
+      if (bookends && rect.bottom < vh) {
+        /*
+         * The same on the way out, but the room below has to be measured
+         * rather than assumed: this page has only about half a screen of
+         * scroll left once the cycle lets go, so a handover priced at a full
+         * screen never finished and the field stopped short of the closing
+         * formation at the very bottom of the page.
+         */
+        const doc = document.documentElement.scrollHeight;
+        const below = doc - (rect.bottom + window.scrollY) - vh;
+        const span = Math.min(vh, Math.max(1, below));
+        world.blendLock =
+          shapeBase + n - 1 + Math.max(0, Math.min(-rect.bottom / span, 1));
+        world.blend = world.blendLock;
+        setAt(n - 1);
+        setOnBookend(true);
+        return;
+      }
+
       const local = Math.min(p * n, n - 0.0001);
       const step = Math.floor(local);
       const frac = local - step;
@@ -137,6 +183,7 @@ export default function ShapeCycle<T extends CycleItem>({
       world.blendLock = shapeBase + lock;
       world.blend = world.blendLock;
       setAt(Math.min(n - 1, step + (eased > 0.5 ? 1 : 0)));
+      setOnBookend(false);
     };
 
     const ctx = gsap.context(() => {
@@ -157,16 +204,19 @@ export default function ShapeCycle<T extends CycleItem>({
       ctx.revert();
       world.blendLock = null;
     };
-  }, [items, shapeBase]);
+  }, [items, shapeBase, bookends]);
 
-  // the field takes the colour of whatever is on screen
+  // The field takes the colour of whatever is on screen — but only while the
+  // cycle owns it. On the bookends it falls back to that formation's own
+  // palette, so the flag reads as a flag rather than in the last subject's
+  // accent.
   useEffect(() => {
     if (reduced) return;
-    world.accent = items[at].accent;
+    world.accent = onBookend ? null : items[at].accent;
     return () => {
       world.accent = null;
     };
-  }, [at, reduced, items]);
+  }, [at, onBookend, reduced, items]);
 
   if (reduced) {
     return (
