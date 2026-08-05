@@ -32,6 +32,8 @@ export const SHAPES = [
   "phone",
   "node",
   "book",
+  // the store
+  "bag",
 ] as const;
 
 /** where the hobby silhouettes begin in SHAPES */
@@ -43,6 +45,9 @@ export const OFF_CLOSE_SHAPE = SHAPES.indexOf("flag");
 
 /** where the on-work silhouettes begin in SHAPES */
 export const WORK_SHAPE = SHAPES.indexOf("stack");
+
+/** what the store page holds */
+export const STORE_SHAPE = SHAPES.indexOf("bag");
 
 export type ShapeName = (typeof SHAPES)[number];
 
@@ -75,6 +80,7 @@ export const SECTION_PALETTES: [string, string][] = [
   ["#3fd2c7", "#c3fff4"], // phone
   ["#ff6ad5", "#ffd166"], // node
   ["#ffb454", "#ffe9c2"], // book
+  ["#ff5c28", "#ffd9c2"], // bag
 ];
 
 /** Particle field opacity per section — the world recedes while you read. */
@@ -83,6 +89,7 @@ export const SECTION_OPACITY = [
   // the silhouettes are the subject of their page, so they carry
   0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
   0.9, 0.9, 0.9, 0.9, 0.9,
+  0.72,
 ];
 
 /** Camera keyframes per section: position + lookAt. */
@@ -110,6 +117,7 @@ export const CAMERA_KEYS: { pos: [number, number, number]; look: [number, number
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // phone
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // node
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // book
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // bag
 ];
 
 type WorldState = {

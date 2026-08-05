@@ -268,6 +268,19 @@ export const SILHOUETTES: Silhouette[] = [
     `,
   },
   {
+    key: "bag",
+    /* the store, in the plainest possible terms */
+    box: [200, 224],
+    art: `
+      <path
+        d="M64 82 Q64 32 100 32 Q136 32 136 82"
+        fill="none" stroke-width="13" stroke-linecap="round"
+      />
+      <path d="M22 78 L178 78 L192 212 L8 212 Z"/>
+    `,
+    holes: `<rect x="72" y="126" width="56" height="14" rx="7"/>`,
+  },
+  {
     key: "book",
     box: [260, 184],
     art: `

@@ -373,3 +373,50 @@ export const CAPABILITIES = [
     items: ["New stacks", "New languages", "Whatever the build needs"],
   },
 ];
+
+/**
+ * /store — the shelf.
+ *
+ * Nothing here is buyable yet, and every card says so, so a visitor is never
+ * misled. To open the store: give an item a `price` and a `href` pointing at
+ * wherever the checkout lives, and drop its photo at the path in `image`.
+ * The card switches itself over — there is no other flag to flip.
+ */
+export type StoreItem = {
+  key: string;
+  name: string;
+  blurb: string;
+  /** what it is, in one word, for the card's corner */
+  kind: string;
+  image: string;
+  /** set both of these and the card goes live */
+  price?: string;
+  href?: string;
+};
+
+export const STORE_ITEMS: StoreItem[] = [
+  {
+    key: "print",
+    name: "Prints",
+    blurb:
+      "Cars, mostly, shot on the days the light was worth the drive. Printed large enough to be the reason you look at that wall.",
+    kind: "Photography",
+    image: "/img/store/print.jpg",
+  },
+  {
+    key: "presets",
+    name: "The presets",
+    blurb:
+      "The pack I actually edit with — the one that makes a grey Ontario afternoon look like it was worth photographing.",
+    kind: "Download",
+    image: "/img/store/presets.jpg",
+  },
+  {
+    key: "stickers",
+    name: "Stickers",
+    blurb:
+      "For the toolbox, the laptop lid, the inside of the hood. Cut, weatherproof, and cheap enough to buy five.",
+    kind: "Vinyl",
+    image: "/img/store/stickers.jpg",
+  },
+];
