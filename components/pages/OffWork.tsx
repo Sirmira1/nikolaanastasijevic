@@ -29,6 +29,7 @@ gsap.registerPlugin(ScrollTrigger);
  */
 const HOLD = 0.74;
 
+
 function Cycle() {
   const sectionRef = useRef<HTMLElement>(null);
   const [at, setAt] = useState(0);
@@ -42,31 +43,55 @@ function Cycle() {
     const section = sectionRef.current;
     if (!section) return;
 
+    const n = OBSESSIONS.length;
+
+    /**
+     * One driver for the whole page rather than one for the pinned section.
+     * Held only while pinned, the field fell back to the page's section blend
+     * either side of it — which sits nowhere near the hobby formations, so
+     * arriving sprinted through six unrelated shapes and leaving snapped
+     * straight back. This is a continuous function of scroll from the top of
+     * the page to the bottom: the car before the cycle, the cycle through it,
+     * and an unhurried walk back to the car afterwards.
+     */
+    const drive = () => {
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const travel = Math.max(rect.height - vh, 1);
+      const p = Math.max(0, Math.min(-rect.top / travel, 1));
+
+      const local = Math.min(p * n, n - 0.0001);
+      const step = Math.floor(local);
+      const frac = local - step;
+      // hold, then morph over the last stretch of each subject's span
+      const morph = frac <= HOLD ? 0 : (frac - HOLD) / (1 - HOLD);
+      const eased = morph * morph * (3 - 2 * morph);
+      let lock = Math.min(step + eased, n - 1);
+
+      // Nothing below the cycle wants a different shape, so the field simply
+      // stays where the tour left it. Walking it back would mean crossing
+      // every formation again on whatever scroll happened to be left — which
+      // is the same scramble, just at the other end.
+
+      world.blendLock = HOBBY_SHAPE + lock;
+      world.blend = world.blendLock;
+      setAt(Math.min(n - 1, step + (eased > 0.5 ? 1 : 0)));
+    };
+
     const ctx = gsap.context(() => {
-      const n = OBSESSIONS.length;
+      // the whole document, so the driver is never out of range
       ScrollTrigger.create({
-        trigger: section,
+        trigger: document.body,
         start: "top top",
         end: "bottom bottom",
-        onUpdate: (self) => {
-          const local = Math.min(self.progress * n, n - 0.0001);
-          const step = Math.floor(local);
-          const frac = local - step;
-          // hold, then morph over the last stretch of each subject's span
-          const morph = frac <= HOLD ? 0 : (frac - HOLD) / (1 - HOLD);
-          const eased = morph * morph * (3 - 2 * morph);
-
-          world.blendLock = Math.min(HOBBY_SHAPE + step + eased, HOBBY_SHAPE + n - 1);
-          world.blend = world.blendLock;
-
-          // the word changes halfway through the morph, with the shape
-          setAt(Math.min(n - 1, step + (eased > 0.5 ? 1 : 0)));
-        },
-        onToggle: (self) => {
-          if (!self.isActive) world.blendLock = null;
-        },
+        onUpdate: drive,
+        onRefresh: drive,
       });
     }, section);
+
+    // and immediately, so the page opens on the car rather than on whatever
+    // formation the previous page left behind
+    drive();
     return () => {
       ctx.revert();
       world.blendLock = null;
@@ -278,8 +303,6 @@ export default function OffWork() {
         </div>
       </section>
 
-      <Cycle />
-
       {/* cars, at the length it deserves */}
       <section
         data-shape
@@ -341,6 +364,8 @@ export default function OffWork() {
           </div>
         </div>
       </section>
+
+      <Cycle />
 
       <Hand />
     </>
