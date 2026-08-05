@@ -96,13 +96,21 @@ export function RevealLines({
   className = "",
   stagger = 0.12,
   start = "top 85%",
+  as: Tag = "div",
 }: {
   children: ReactNode;
   className?: string;
   stagger?: number;
   start?: string;
+  /**
+   * What this block actually is. It defaults to a plain div, which is right
+   * for a run of copy — but a page's opening headline is the page's heading,
+   * and rendering it as a div left three of the four pages with no h1 at all
+   * for anyone navigating by headings.
+   */
+  as?: "div" | "h1" | "h2";
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const el = ref.current;
@@ -127,9 +135,9 @@ export function RevealLines({
   }, [stagger, start]);
 
   return (
-    <div ref={ref} className={className}>
+    <Tag ref={ref as React.RefObject<HTMLDivElement>} className={className}>
       {children}
-    </div>
+    </Tag>
   );
 }
 
@@ -188,7 +196,15 @@ export function SectionLabel({ index, title }: { index: string; title: string })
     <Rise className="mb-14 flex items-center gap-4 md:mb-20">
       <span className="font-mono text-xs tracking-[0.25em] text-ember">{index}</span>
       <span className="h-px w-12 bg-ink/20" />
-      <span className="font-mono text-xs uppercase tracking-[0.25em] text-dim">{title}</span>
+      {/*
+        This is what names the section, so it is the section's heading — not a
+        span that merely looks like one. Left as spans, every page ran its h1
+        straight into the h3 of the first card and gave anyone navigating by
+        headings no way to tell one section from the next.
+      */}
+      <h2 className="font-mono text-xs font-normal uppercase tracking-[0.25em] text-dim">
+        {title}
+      </h2>
     </Rise>
   );
 }

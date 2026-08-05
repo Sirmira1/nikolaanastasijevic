@@ -76,7 +76,7 @@ export default function Store() {
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-ember">
             Store
           </span>
-          <RevealLines className="on-field mt-6 font-display text-[13vw] font-extrabold leading-[0.92] tracking-tight text-ink md:text-[8vw]">
+          <RevealLines as="h1" className="on-field mt-6 font-display text-[13vw] font-extrabold leading-[0.92] tracking-tight text-ink md:text-[8vw]">
             <Line>SOMETHING</Line>
             <Line>
               WORTH <span className="font-serif font-normal italic text-ember">owning</span>
