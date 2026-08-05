@@ -1,3 +1,5 @@
+import { SITE_URL } from "@/lib/site";
+
 export type Project = {
   index: string;
   title: string;
@@ -194,7 +196,7 @@ export const EXPERIMENTS: Experiment[] = [
 export const SOCIALS = [
   { label: "GitHub", href: "https://github.com/Sirmira1" },
   { label: "LinkedIn", href: "https://linkedin.com/in/nikola-anastasijevic-a737632ba/" },
-  { label: "Website", href: "https://www.nikolaanastasijevic.com" },
+  { label: "Website", href: SITE_URL },
 ];
 
 export const EMAIL = "nikolaanastasijevic0@gmail.com";
