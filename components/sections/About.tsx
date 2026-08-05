@@ -83,20 +83,22 @@ export default function About() {
           <Line>
             I wish <span className="font-serif italic text-ember">existed</span>.
           </Line>
-          <Line className="mt-8 font-mono text-sm font-normal normal-case leading-relaxed tracking-normal text-dim lg:text-base">
-            I&rsquo;m Nikola — a software developer in Hamilton, studying at Mohawk
-          </Line>
-          <Line className="font-mono text-sm font-normal leading-relaxed tracking-normal text-dim lg:text-base">
-            and working a co-op at MPBSDP. My own work is where it gets personal:
-          </Line>
-          <Line className="font-mono text-sm font-normal leading-relaxed tracking-normal text-dim lg:text-base">
-            a map that uncovers as I drive, software for every dollar spent on
-          </Line>
-          <Line className="font-mono text-sm font-normal leading-relaxed tracking-normal text-dim lg:text-base">
-            my cars, a rental flow with real bookings, and a bot reading live
-          </Line>
-          <Line className="font-mono text-sm font-normal leading-relaxed tracking-normal text-dim lg:text-base">
-            markets. I like owning the whole build — interface, data, and launch.
+          {/*
+            One line, not five. The paragraph used to be hand-broken into a
+            line per mask, at lengths chosen for the desktop column — so on a
+            phone every one of them wrapped a second time and the copy came out
+            in a ragged sawtooth, each break landing mid-clause. The measure
+            does that job instead: it holds the same comfortable line length
+            the hand-breaks were aiming for, and gives way to the column when
+            the column is the narrower of the two.
+          */}
+          <Line className="mt-8 max-w-[62ch] font-mono text-sm font-normal normal-case leading-relaxed tracking-normal text-dim lg:text-base">
+            I&rsquo;m Nikola — a software developer in Hamilton, studying at
+            Mohawk and working a co-op at MPBSDP. My own work is where it gets
+            personal: a map that uncovers as I drive, software for every dollar
+            spent on my cars, a rental flow with real bookings, and a bot
+            reading live markets. I like owning the whole build — interface,
+            data, and launch.
           </Line>
         </RevealLines>
 
