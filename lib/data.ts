@@ -332,36 +332,44 @@ export const SOCIAL_CARDS = [
   { label: "Email", handle: EMAIL, href: `mailto:${EMAIL}`, tint: "#ff5c28" },
 ];
 
-/** /on-work — what the job actually is. */
+/**
+ * /on-work — what the job actually is. Ordered to match the capability
+ * silhouettes in SHAPES, because the cycle walks both lists together.
+ */
 export const CAPABILITIES = [
   {
-    index: "01",
-    title: "Full stack",
-    note: "Interface to database to deployment. One person, the whole path, which is why the seams line up.",
+    key: "stack",
+    label: "FULL STACK",
+    lead: "Interface to database to deployment. One person, the whole path, which is why the seams line up.",
+    accent: "#6ea8ff",
     items: ["React / Next.js", "TypeScript", "Node", ".NET / Laravel", "MySQL / Supabase"],
   },
   {
-    index: "02",
-    title: "Design",
-    note: "I draw it before I build it. A product that works and looks like an afterthought is still an afterthought.",
+    key: "design",
+    label: "DESIGN",
+    lead: "I draw it before I build it. A product that works and looks like an afterthought is still an afterthought.",
+    accent: "#c9a2ff",
     items: ["Interface design", "Motion", "3D / WebGL", "Design systems"],
   },
   {
-    index: "03",
-    title: "Apps",
-    note: "Mobile and web, shipped to real people with real accounts and real money moving through them.",
+    key: "apps",
+    label: "APPS",
+    lead: "Mobile and web, shipped to real people with real accounts and real money moving through them.",
+    accent: "#3fd2c7",
     items: ["React Native", "Swift", "Payments", "Auth"],
   },
   {
-    index: "04",
-    title: "AI",
-    note: "Using it daily and building with it — models wired into products, not demos.",
+    key: "ai",
+    label: "AI",
+    lead: "Using it daily and building with it — models wired into products, not demos.",
+    accent: "#ff6ad5",
     items: ["LLM features", "Agents / tooling", "Prompt + eval work"],
   },
   {
-    index: "05",
-    title: "Learning",
-    note: "Every project picks a thing I cannot do yet. That is the point of the project.",
+    key: "learning",
+    label: "LEARNING",
+    lead: "Every project picks a thing I cannot do yet. That is the point of the project.",
+    accent: "#ffb454",
     items: ["New stacks", "New languages", "Whatever the build needs"],
   },
 ];

@@ -145,6 +145,73 @@ export const SILHOUETTES: Silhouette[] = [
       <path d="M194 38 Q208 75 194 112" fill="none" stroke="#000" stroke-width="7"/>
     `,
   },
+
+  /* ---------------------------------------------------------------- */
+  /*  The on-work page: one formation per capability                   */
+  /* ---------------------------------------------------------------- */
+
+  {
+    key: "stack",
+    box: [260, 212],
+    art: `
+      <!-- three layers seen from a corner: the whole path, one slab a tier -->
+      <path d="M20 44 L130 18 L240 44 L130 70 Z"/>
+      <path d="M20 106 L130 80 L240 106 L130 132 Z"/>
+      <path d="M20 168 L130 142 L240 168 L130 194 Z"/>
+    `,
+  },
+  {
+    key: "nib",
+    box: [140, 224],
+    art: `
+      <!-- a pen nib: drawn before it is built -->
+      <path d="M70 216 L18 96 Q18 42 70 14 Q122 42 122 96 Z"/>
+    `,
+    holes: `
+      <circle cx="70" cy="98" r="17"/>
+      <rect x="63" y="116" width="14" height="88" rx="7"/>
+    `,
+  },
+  {
+    key: "phone",
+    box: [140, 250],
+    art: `
+      <rect x="8" y="6" width="124" height="238" rx="26"/>
+    `,
+    holes: `
+      <rect x="24" y="48" width="92" height="150" rx="9"/>
+      <rect x="52" y="26" width="36" height="8" rx="4"/>
+      <rect x="50" y="216" width="40" height="8" rx="4"/>
+    `,
+  },
+  {
+    key: "node",
+    box: [240, 200],
+    art: `
+      <!-- a model: one thing in the middle, wired to everything else -->
+      <path
+        d="M120 100 L30 40 M120 100 L30 160 M120 100 L120 20
+           M120 100 L120 180 M120 100 L210 40 M120 100 L210 160"
+        fill="none" stroke-width="8"
+      />
+      <circle cx="120" cy="100" r="27"/>
+      <circle cx="30" cy="40" r="18"/>
+      <circle cx="30" cy="160" r="18"/>
+      <circle cx="120" cy="20" r="18"/>
+      <circle cx="120" cy="180" r="18"/>
+      <circle cx="210" cy="40" r="18"/>
+      <circle cx="210" cy="160" r="18"/>
+    `,
+  },
+  {
+    key: "book",
+    box: [260, 184],
+    art: `
+      <!-- open book: every project picks something I cannot do yet -->
+      <path d="M126 46 Q80 18 14 27 L14 152 Q80 143 126 170 Z"/>
+      <path d="M134 46 Q180 18 246 27 L246 152 Q180 143 134 170 Z"/>
+    `,
+  },
 ];
 
 /**

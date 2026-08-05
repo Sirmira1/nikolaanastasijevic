@@ -1,7 +1,69 @@
 "use client";
 
 import { CAPABILITIES, PROJECTS } from "@/lib/data";
+import { WORK_SHAPE } from "@/lib/world";
 import { SectionLabel, Rise, RevealLines, Line } from "@/components/ui/Split";
+import ShapeCycle from "@/components/sections/ShapeCycle";
+
+/**
+ * The stack behind one capability, as a plate rather than a photo. The
+ * off-work cycle puts a picture here; this page has no picture to put, and a
+ * list of what the work is actually made of is the more honest answer.
+ */
+function Plate({ items, accent }: { items: readonly string[]; accent: string }) {
+  return (
+    /*
+     * No fill. A translucent panel laid over the field cut a hard-edged
+     * rectangle through the silhouette behind it — the same seam that reads as
+     * a rendering fault anywhere else on this site. The hairline and the type
+     * are enough to make it a panel, and the shape stays whole underneath.
+     */
+    <div className="flex h-full flex-col justify-center rounded-sm border border-ink/15 p-6 [text-shadow:0_2px_16px_rgba(8,7,11,1),0_0_34px_rgba(8,7,11,0.9)] md:p-8">
+      {/* not in the accent: the field is already wearing it, and accent type
+          on an accent-coloured silhouette disappears into it */}
+      <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-ink/65">
+        What it is made of
+      </span>
+      <ul role="list" className="mt-5">
+        {items.map((it) => (
+          <li
+            key={it}
+            className="flex items-baseline gap-3 border-t border-ink/12 py-3 font-mono text-xs text-ink first:border-t-0 md:text-sm"
+          >
+            <span
+              aria-hidden="true"
+              className="h-1 w-1 shrink-0 translate-y-[-2px] rounded-full"
+              style={{ background: accent }}
+            />
+            {it}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** One capability at a time, the field holding a silhouette of each. */
+function Capabilities() {
+  return (
+    <ShapeCycle
+      items={CAPABILITIES}
+      shapeBase={WORK_SHAPE}
+      label="What that means in practice"
+      asideAspect="4 / 3"
+      aside={(c) => <Plate items={c.items} accent={c.accent} />}
+      fallback={(c) => (
+        <>
+          <h3 className="font-display text-3xl font-extrabold text-ink">{c.label}</h3>
+          <p className="mt-2 max-w-md font-mono text-sm leading-relaxed text-dim">{c.lead}</p>
+          <div className="mt-4">
+            <Plate items={c.items} accent={c.accent} />
+          </div>
+        </>
+      )}
+    />
+  );
+}
 
 export default function OnWork() {
   return (
@@ -30,45 +92,7 @@ export default function OnWork() {
         </div>
       </section>
 
-      {/* what the job actually is */}
-      <section
-        data-shape
-        aria-label="Capabilities"
-        className="relative px-5 py-[16vh] md:px-10"
-      >
-        <div className="section-veil" aria-hidden="true" />
-        <div className="mx-auto max-w-[1400px]">
-          <SectionLabel index="01" title="What that means in practice" />
-
-          <div className="flex flex-col">
-            {CAPABILITIES.map((c, i) => (
-              <Rise
-                key={c.index}
-                delay={i * 0.05}
-                className="grid gap-4 border-t border-ink/15 py-10 last:border-b md:grid-cols-[80px_1fr_1fr] md:gap-12"
-              >
-                <span className="font-mono text-xs tracking-[0.25em] text-ember">{c.index}</span>
-                <div>
-                  <h3 className="font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
-                    {c.title}
-                  </h3>
-                  <ul role="list" className="mt-4 flex flex-wrap gap-2">
-                    {c.items.map((it) => (
-                      <li
-                        key={it}
-                        className="rounded-full border border-ink/22 px-3 py-1 font-mono text-[9px] uppercase tracking-[0.18em] text-ink/75"
-                      >
-                        {it}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <p className="max-w-md font-mono text-sm leading-relaxed text-ink/75">{c.note}</p>
-              </Rise>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Capabilities />
 
       {/* proof, pointing back at the work on the home page */}
       <section

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Shell from "@/components/Shell";
 import PageNav from "@/components/PageNav";
 import OnWork from "@/components/pages/OnWork";
+import { WORK_SHAPE } from "@/lib/world";
 
 export const metadata: Metadata = {
   title: "On Work — Nikola Anastasijević",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function OnWorkPage() {
   return (
-    <Shell shapeBase={3}>
+    <Shell shapeBase={WORK_SHAPE}>
       <OnWork />
       <PageNav />
     </Shell>

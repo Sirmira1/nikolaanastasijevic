@@ -21,10 +21,19 @@ export const SHAPES = [
   "camera",
   "controller",
   "football",
+  // the on-work page: one formation per capability
+  "stack",
+  "nib",
+  "phone",
+  "node",
+  "book",
 ] as const;
 
 /** where the hobby silhouettes begin in SHAPES */
 export const HOBBY_SHAPE = SHAPES.indexOf("car");
+
+/** where the on-work silhouettes begin in SHAPES */
+export const WORK_SHAPE = SHAPES.indexOf("stack");
 
 export type ShapeName = (typeof SHAPES)[number];
 
@@ -49,6 +58,12 @@ export const SECTION_PALETTES: [string, string][] = [
   ["#c9a2ff", "#efe4ff"], // camera
   ["#ff6ad5", "#ffd166"], // controller
   ["#ffb454", "#ffe9c2"], // football
+  // the capability silhouettes, likewise overridden by the page
+  ["#6ea8ff", "#dfe8ff"], // stack
+  ["#c9a2ff", "#efe4ff"], // nib
+  ["#3fd2c7", "#c3fff4"], // phone
+  ["#ff6ad5", "#ffd166"], // node
+  ["#ffb454", "#ffe9c2"], // book
 ];
 
 /** Particle field opacity per section — the world recedes while you read. */
@@ -56,6 +71,7 @@ export const SECTION_OPACITY = [
   1, 1, 0.55, 0.4, 0.34, 0.45, 0.58, 0.95,
   // the silhouettes are the subject of their page, so they carry
   0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
+  0.9, 0.9, 0.9, 0.9, 0.9,
 ];
 
 /** Camera keyframes per section: position + lookAt. */
@@ -76,6 +92,11 @@ export const CAMERA_KEYS: { pos: [number, number, number]; look: [number, number
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // camera
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // controller
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // football
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // stack
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // nib
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // phone
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // node
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // book
 ];
 
 type WorldState = {
