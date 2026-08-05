@@ -214,6 +214,32 @@ export const SILHOUETTES: Silhouette[] = [
   /*  The on-work page: one formation per capability                   */
   /* ---------------------------------------------------------------- */
 
+  /* ---------------------------------------------------------------- */
+  /*  The bookends of the on-work page                                 */
+  /* ---------------------------------------------------------------- */
+
+  {
+    key: "terminal",
+    /* what the page opens on: the room the work actually happens in */
+    box: [280, 200],
+    art: `<rect x="10" y="16" width="260" height="168" rx="16"/>`,
+    holes: `
+      <circle cx="36" cy="40" r="8"/>
+      <circle cx="62" cy="40" r="8"/>
+      <circle cx="88" cy="40" r="8"/>
+      <rect x="10" y="60" width="260" height="5"/>
+      <path d="M44 92 L70 112 L44 132 L34 123 L50 112 L34 101 Z"/>
+      <rect x="84" y="105" width="92" height="14" rx="5"/>
+      <rect x="44" y="146" width="150" height="13" rx="5"/>
+    `,
+  },
+  {
+    key: "plane",
+    /* and what it closes on, over Shipped, and still running */
+    box: [240, 200],
+    art: `<path d="M8 192 L232 100 L8 8 L8 76 L160 100 L8 124 Z"/>`,
+  },
+
   {
     key: "stack",
     box: [260, 212],

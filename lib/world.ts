@@ -26,12 +26,14 @@ export const SHAPES = [
   "controller",
   "football",
   "flag",
-  // the on-work page: one formation per capability
+  // the on-work page: one formation per capability, bookended the same way
+  "terminal",
   "stack",
   "nib",
   "phone",
   "node",
   "book",
+  "plane",
   // the store
   "bag",
 ] as const;
@@ -45,6 +47,10 @@ export const OFF_CLOSE_SHAPE = SHAPES.indexOf("flag");
 
 /** where the on-work silhouettes begin in SHAPES */
 export const WORK_SHAPE = SHAPES.indexOf("stack");
+
+/** what the on-work page opens and closes on, either side of the capabilities */
+export const WORK_OPEN_SHAPE = SHAPES.indexOf("terminal");
+export const WORK_CLOSE_SHAPE = SHAPES.indexOf("plane");
 
 /** what the store page holds */
 export const STORE_SHAPE = SHAPES.indexOf("bag");
@@ -75,11 +81,13 @@ export const SECTION_PALETTES: [string, string][] = [
   ["#ffb454", "#ffe9c2"], // football
   ["#ece7df", "#ffffff"], // flag — the finish, in plain ink
   // the capability silhouettes, likewise overridden by the page
+  ["#6ea8ff", "#dfe8ff"], // terminal
   ["#6ea8ff", "#dfe8ff"], // stack
   ["#c9a2ff", "#efe4ff"], // nib
   ["#3fd2c7", "#c3fff4"], // phone
   ["#ff6ad5", "#ffd166"], // node
   ["#ffb454", "#ffe9c2"], // book
+  ["#ece7df", "#ffffff"], // plane — shipped, in plain ink
   ["#ff5c28", "#ffd9c2"], // bag
 ];
 
@@ -88,7 +96,7 @@ export const SECTION_OPACITY = [
   1, 1, 0.55, 0.4, 0.34, 0.45, 0.58, 0.95,
   // the silhouettes are the subject of their page, so they carry
   0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
-  0.9, 0.9, 0.9, 0.9, 0.9,
+  0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
   0.72,
 ];
 
@@ -112,11 +120,13 @@ export const CAMERA_KEYS: { pos: [number, number, number]; look: [number, number
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // controller
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // football
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // flag
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // terminal
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // stack
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // nib
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // phone
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // node
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // book
+  { pos: [0, 0, 11.5], look: [0, 0, 0] },      // plane
   { pos: [0, 0, 11.5], look: [0, 0, 0] },      // bag
 ];
 

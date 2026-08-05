@@ -51,6 +51,7 @@ function Capabilities() {
       shapeBase={WORK_SHAPE}
       label="What that means in practice"
       asideAspect="4 / 3"
+      bookends
       aside={(c) => <Plate items={c.items} accent={c.accent} />}
       fallback={(c) => (
         <>
@@ -73,18 +74,18 @@ export default function OnWork() {
         aria-label="On work"
         className="relative flex min-h-[92svh] flex-col justify-end px-5 pb-[10vh] pt-[24vh] md:px-10"
       >
-        <div className="section-veil" aria-hidden="true" />
+        <div className="section-veil-soft" aria-hidden="true" />
         <div className="mx-auto w-full max-w-[1400px]">
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-ember">
             On work
           </span>
-          <RevealLines className="mt-6 font-display text-[13vw] font-extrabold leading-[0.92] tracking-tight text-ink md:text-[8vw]">
+          <RevealLines className="on-field mt-6 font-display text-[13vw] font-extrabold leading-[0.92] tracking-tight text-ink md:text-[8vw]">
             <Line>I BUILD THE</Line>
             <Line>
               WHOLE <span className="font-serif font-normal italic text-ember">thing</span>
             </Line>
           </RevealLines>
-          <p className="mt-10 max-w-xl font-mono text-sm leading-relaxed text-ink/80 md:text-base">
+          <p className="on-field mt-10 max-w-xl font-mono text-sm leading-relaxed text-ink md:text-base">
             Full-stack developer in Hamilton. Interface, backend, deployment —
             and the design before any of it. One person the whole way down,
             which is why the seams line up.
