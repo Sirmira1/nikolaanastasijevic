@@ -32,8 +32,52 @@ const HOLD = 0.74;
 
 function Cycle() {
   const sectionRef = useRef<HTMLElement>(null);
+  const wordRef = useRef<HTMLDivElement>(null);
   const [at, setAt] = useState(0);
   const [reduced, setReduced] = useState(false);
+
+  /**
+   * Each word is set as large as the column will take it, and no larger.
+   *
+   * One size cannot serve all of them: "SNOWBOARD" is more than twice the
+   * width of "CARS", so a viewport size big enough to give the short word any
+   * presence runs the long one straight off the side of a phone. Sizing the
+   * whole set to the longest fixes the clipping but costs every other word
+   * half its scale. They cross-fade one at a time, though — two are never on
+   * screen together — so there is no matched set to preserve, and each can be
+   * fitted to the column on its own terms.
+   *
+   * The block keeps the height of a full-size word either way, so the copy
+   * beneath it does not hop as the words change.
+   */
+  useEffect(() => {
+    const el = wordRef.current;
+    if (!el) return;
+
+    const fit = () => {
+      const avail = el.clientWidth;
+      if (!avail) return;
+      const words = [...el.querySelectorAll<HTMLElement>("[data-word]")];
+      // measure them all at full size first, then commit — interleaving the
+      // two would have each word re-laying out the ones after it
+      words.forEach((w) => w.style.setProperty("--fit", "1"));
+      const widths = words.map((w) => w.scrollWidth);
+      words.forEach((w, i) => {
+        if (widths[i] > 0) {
+          w.style.setProperty("--fit", String(Math.min(1, avail / widths[i])));
+        }
+      });
+    };
+
+    fit();
+    // the block's own height never changes with the fit, so watching it for
+    // width changes cannot feed back into itself
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    // the display face is the thing being measured, so wait for it to land
+    document.fonts?.ready.then(fit).catch(() => {});
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     if (calmMode()) {
@@ -138,13 +182,19 @@ function Cycle() {
               {String(at + 1).padStart(2, "0")} / {String(OBSESSIONS.length).padStart(2, "0")}
             </span>
 
-            <div className="relative mt-4 h-[16vw] min-h-[86px] md:h-[6.2vw]">
+            <div
+              ref={wordRef}
+              className="relative mt-4 overflow-hidden [--word:15vw] md:[--word:6.4vw]"
+              style={{ height: "calc(var(--word) * 1.02)" }}
+            >
               {OBSESSIONS.map((o, i) => (
                 <h2
                   key={o.key}
+                  data-word
                   aria-hidden={i !== at}
-                  className="absolute inset-0 whitespace-nowrap font-display text-[14vw] font-extrabold leading-[0.9] tracking-tight transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] md:text-[5.9vw]"
+                  className="absolute bottom-0 left-0 w-max whitespace-nowrap font-display font-extrabold leading-[0.9] tracking-tight transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
                   style={{
+                    fontSize: "calc(var(--word) * var(--fit, 1))",
                     color: i === at ? o.accent : "transparent",
                     opacity: i === at ? 1 : 0,
                     transform: `translateY(${(i - at) * 22}%)`,
@@ -211,19 +261,60 @@ function Cycle() {
 /* ------------------------------------------------------------------ */
 
 /** Social links fanned like a hand — each one lifts and straightens on hover. */
+/** how far each card leans from its neighbour, and how tall a card is */
+const LEAN = 9;
+const CARD_RATIO = 1.5;
+
 function Hand() {
   const n = SOCIAL_CARDS.length;
+  const mid = (n - 1) / 2;
+  const [up, setUp] = useState(-1);
+  const [touch, setTouch] = useState(false);
+
+  // A leaning card is wider than it is: rotate a 105×157 card by 18° and it
+  // covers 148px of the row. Budgeting on the upright width is what let the
+  // outermost cards hang off the edge of a phone even once the fan was sized
+  // to its column, so the spread is solved against the swept width instead.
+  const sweep = (mid * LEAN * Math.PI) / 180;
+  const swell = (Math.cos(sweep) + CARD_RATIO * Math.sin(sweep)) / 2;
+
+  // a phone has no hover, so it must not be told to hover
+  useEffect(() => {
+    setTouch(!window.matchMedia("(hover: hover)").matches);
+  }, []);
+
+  const raise = (i: number) => () => setUp(i);
+  const drop = (i: number) => () => setUp((u) => (u === i ? -1 : u));
 
   return (
     <section aria-label="Elsewhere" className="relative px-5 pb-[16vh] pt-[6vh] md:px-10">
       <div className="mx-auto max-w-[1400px]">
         <SectionLabel index="04" title="Find me elsewhere" />
 
-        <div className="flex min-h-[320px] items-end justify-center pb-6 md:min-h-[380px]">
-          <div className="group/hand relative flex h-[260px] w-full max-w-[760px] items-end justify-center md:h-[300px]">
+        <div className="flex items-end justify-center pb-6">
+          {/*
+            The fan is sized against its own width rather than the viewport's:
+            five 176px cards spread 74px apart need 470px, which is wider than
+            a phone, and the outer cards were being cut off the screen. The
+            card and the spread shrink together down to whatever the column
+            actually has, so the hand still reads as a hand at 390px.
+          */}
+          <div
+            className="relative flex w-full max-w-[760px] items-end justify-center"
+            style={{
+              containerType: "inline-size",
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ...({
+                "--cw": "min(176px, 30cqw)",
+                "--ch": `calc(var(--cw) * ${CARD_RATIO})`,
+                "--step": `min(74px, (48cqw - ${swell.toFixed(3)} * var(--cw)) / ${mid})`,
+                height: "calc(var(--ch) + 72px)",
+              } as any),
+            }}
+          >
             {SOCIAL_CARDS.map((s, i) => {
-              const mid = (n - 1) / 2;
-              const lean = (i - mid) * 9;
+              const open = up === i;
+              const lean = (i - mid) * LEAN;
               const lift = Math.abs(i - mid) * 14;
               return (
                 <a
@@ -233,11 +324,21 @@ function Hand() {
                   rel="noreferrer"
                   data-cursor={s.todo ? "SOON" : "OPEN"}
                   aria-disabled={s.todo || undefined}
-                  className="group absolute bottom-0 h-[230px] w-[150px] origin-bottom rounded-md border border-ink/20 bg-void/85 p-4 backdrop-blur-sm transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:z-20 hover:-translate-y-8 hover:!rotate-0 hover:border-ink/45 md:h-[270px] md:w-[176px]"
+                  onClick={s.todo ? (e) => e.preventDefault() : undefined}
+                  onPointerEnter={raise(i)}
+                  onPointerLeave={drop(i)}
+                  onFocus={raise(i)}
+                  onBlur={drop(i)}
+                  className="group absolute bottom-0 origin-bottom overflow-hidden rounded-md border border-ink/20 bg-void/85 p-3 backdrop-blur-sm transition-[transform,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:p-4"
                   style={{
-                    transform: `rotate(${lean}deg) translateY(${lift}px)`,
-                    left: `calc(50% + ${(i - mid) * 74}px - 75px)`,
-                    zIndex: i,
+                    width: "var(--cw)",
+                    height: "var(--ch)",
+                    left: `calc(50% + (${i - mid}) * var(--step) - var(--cw) / 2)`,
+                    transform: open
+                      ? "rotate(0deg) translateY(-28px)"
+                      : `rotate(${lean}deg) translateY(${lift}px)`,
+                    borderColor: open ? "rgba(236,231,223,0.45)" : undefined,
+                    zIndex: open ? 30 : i,
                   }}
                 >
                   <span
@@ -245,15 +346,18 @@ function Hand() {
                     className="block h-1.5 w-1.5 rounded-full"
                     style={{ background: s.tint }}
                   />
-                  <span className="mt-4 block font-display text-lg font-bold leading-tight text-ink md:text-xl">
+                  <span
+                    className="mt-3 block font-display font-bold leading-tight text-ink md:mt-4"
+                    style={{ fontSize: "max(13px, calc(var(--cw) * 0.115))" }}
+                  >
                     {s.label}
                   </span>
-                  <span className="mt-1 block break-words font-mono text-[9px] uppercase tracking-[0.18em] text-ink/60">
+                  <span className="mt-1 block break-words font-mono text-[9px] uppercase leading-relaxed tracking-[0.14em] text-ink/60">
                     {s.todo ? "Link to come" : s.handle}
                   </span>
                   <span
                     aria-hidden="true"
-                    className="absolute bottom-4 left-4 font-mono text-[10px] text-ink/45 transition-colors duration-300 group-hover:text-ember"
+                    className="absolute bottom-3 left-3 font-mono text-[10px] text-ink/45 transition-colors duration-300 group-hover:text-ember md:bottom-4 md:left-4"
                   >
                     ↗
                   </span>
@@ -264,7 +368,7 @@ function Hand() {
         </div>
 
         <p className="mt-4 text-center font-mono text-[10px] uppercase tracking-[0.24em] text-ink/50">
-          Hover a card
+          {touch ? "Tap a card" : "Hover a card"}
         </p>
       </div>
     </section>

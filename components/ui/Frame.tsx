@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 /**
  * An image slot that is honest about being empty. Until a file exists at
@@ -23,6 +23,17 @@ export default function Frame({
 }) {
   const [missing, setMissing] = useState(false);
 
+  /*
+   * An eager image starts loading from the server-rendered markup, so a broken
+   * one has already fired — and lost — its error event by the time React is
+   * listening. That left exactly the first frame on a page showing a broken
+   * icon while every lazy frame below it fell back correctly. A failed image
+   * still reports itself complete, with no intrinsic width.
+   */
+  const settle = useCallback((node: HTMLImageElement | null) => {
+    if (node?.complete && node.naturalWidth === 0) setMissing(true);
+  }, []);
+
   return (
     <div
       className={`relative overflow-hidden rounded-sm border border-ink/15 bg-void/40 ${className}`}
@@ -31,6 +42,7 @@ export default function Frame({
       {!missing && (
         /* eslint-disable-next-line @next/next/no-img-element */
         <img
+          ref={settle}
           src={src}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
