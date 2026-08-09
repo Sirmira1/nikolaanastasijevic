@@ -185,7 +185,7 @@ export default function Projects() {
                         {p.index}
                       </span>
                       <h3
-                        className={`text-stroke order-3 col-span-2 font-display text-[9vw] font-extrabold leading-[0.95] tracking-tight transition-all duration-500 [overflow-wrap:anywhere] md:order-none md:col-span-1 md:text-[6.5vw] ${
+                        className={`text-stroke order-3 col-span-2 font-display text-[9vw] font-extrabold leading-[1.02] tracking-tight transition-all duration-500 [overflow-wrap:anywhere] md:order-none md:col-span-1 md:text-[6.5vw] ${
                           isActive ? "translate-x-3" : ""
                         }`}
                         style={isActive ? { color: p.accent, WebkitTextStroke: "0px" } : undefined}
@@ -238,7 +238,7 @@ export default function Projects() {
             <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-ember">
               Beyond the selected four
             </span>
-            <p className="max-w-2xl font-display text-2xl font-semibold leading-tight text-ink md:text-4xl">
+            <p className="max-w-2xl font-display text-2xl font-semibold leading-[1.1] text-ink md:text-4xl">
               The backlog moves between cars, maps, money, local businesses,
               and whatever I wish existed next.
             </p>
