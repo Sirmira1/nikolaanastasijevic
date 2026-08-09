@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { audio } from "@/lib/audio";
 import { calmMode } from "@/lib/calm";
 
 /**
@@ -65,7 +64,6 @@ export default function Cursor() {
       if (tag) {
         targetScale = 3.2;
         setLabel(tag);
-        audio.hover(); // only the big, labeled targets speak
       } else {
         targetScale = 1.9;
         setLabel("");
@@ -82,7 +80,6 @@ export default function Cursor() {
 
     const onDown = () => {
       pressed = true;
-      audio.click();
     };
     const onUp = () => (pressed = false);
     const onLeaveWindow = () => {

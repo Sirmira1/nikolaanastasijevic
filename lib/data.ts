@@ -183,13 +183,13 @@ export type Experiment = {
  * already standing on, next to two frames of nothing, is not a portfolio.
  */
 export const EXPERIMENTS: Experiment[] = [
-  { index: "E—01", title: "APEX", medium: "Portfolio at racing pace — 3D garage", gradient: ["#2a0604", "#ff5c28"], image: "/img/lab-apex.webp" },
+  { index: "E—01", title: "THE HALL", medium: "Portfolio as a walkable 3D museum", gradient: ["#150f07", "#d8b271"], image: "/img/lab-the-hall.webp" },
   { index: "E—02", title: "SOFT", medium: "Design study — minimal Gen Z aesthetic", gradient: ["#1b0f3d", "#c9a2ff"], href: "https://soft-design.vercel.app/", image: "/img/Screenshot 2026-07-03 095957.png" },
   { index: "E—03", title: "FOG OF WAR", medium: "Mapbox exploration mask from FlyBy", gradient: ["#032622", "#3fd2c7"], image: "/img/Screenshot 2026-07-08 112150.png" },
   { index: "E—04", title: "OVERCLOCK", medium: "Cyber build — a 3D core in motion", gradient: ["#050b1e", "#6ea8ff"], image: "/img/lab-overclock.webp" },
   { index: "E—05", title: "NOIR", medium: "Design study — high-contrast cinema", gradient: ["#12122e", "#6ea8ff"], href: "https://mysterious-design.vercel.app/", image: "/img/Screenshot 2026-07-03 100331.png" },
   { index: "E—06", title: "BACKTEST RIG", medium: "Trading strategies, simulated overnight", gradient: ["#26043a", "#ff6ad5"], image: "/img/Screenshot 2026-07-08 112603.png" },
-  { index: "E—07", title: "THE HALL", medium: "Portfolio as a walkable 3D museum", gradient: ["#150f07", "#d8b271"], image: "/img/lab-the-hall.webp" },
+  { index: "E—07", title: "APEX", medium: "Portfolio at racing pace — 3D garage", gradient: ["#2a0604", "#ff5c28"], image: "/img/lab-apex.webp" },
   { index: "E—08", title: "CASUAL", medium: "Design study — approachable modern", gradient: ["#231a02", "#ffb454"], href: "https://casual-design-five.vercel.app/", image: "/img/Screenshot 2026-07-03 100054.png" },
 ];
 

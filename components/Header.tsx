@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { audio } from "@/lib/audio";
 import { calmChosen, toggleCalm } from "@/lib/calm";
 import Magnetic from "@/components/ui/Magnetic";
 
@@ -31,7 +30,6 @@ function Clock() {
 }
 
 export default function Header({ visible }: { visible: boolean }) {
-  const [sound, setSound] = useState(false);
   const [calm, setCalm] = useState(false);
   useEffect(() => setCalm(calmChosen()), []);
 
@@ -109,30 +107,6 @@ export default function Header({ visible }: { visible: boolean }) {
               aria-label="Open console"
             >
               <span className="text-ember">/</span>&nbsp;CONSOLE
-            </button>
-          </Magnetic>
-          <Magnetic strength={0.4}>
-            <button
-              onClick={() => setSound(audio.toggle())}
-              className="flex items-center gap-2 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink"
-              aria-pressed={sound}
-              aria-label={sound ? "Mute sound" : "Enable sound"}
-            >
-              <span className="flex h-3 items-end gap-[2px]" aria-hidden="true">
-                {[0, 1, 2].map((i) => (
-                  <span
-                    key={i}
-                    className={`w-[2px] bg-ember transition-all duration-300 ${
-                      sound ? "animate-pulse" : ""
-                    }`}
-                    style={{
-                      height: sound ? `${6 + i * 3}px` : "2px",
-                      animationDelay: `${i * 0.15}s`,
-                    }}
-                  />
-                ))}
-              </span>
-              <span className="hidden sm:inline">{sound ? "SOUND ON" : "SOUND OFF"}</span>
             </button>
           </Magnetic>
 

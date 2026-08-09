@@ -5,7 +5,6 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { world, NUM_SHAPES, SHAPES, SECTION_PALETTES, SECTION_OPACITY } from "@/lib/world";
 import { markScale, sampleSignature } from "@/lib/signature";
-import { audio } from "@/lib/audio";
 
 /* ------------------------------------------------------------------ */
 /*  Shape generation — every section is a formation of the same        */
@@ -452,7 +451,6 @@ export default function Particles() {
   const tmpB = useMemo(() => new THREE.Color(), []);
   const proj = useMemo(() => new THREE.Vector3(), []);
   const lastClick = useRef(-100);
-  const audioLvl = useRef(0);
 
   useEffect(() => {
     let active = true;
@@ -554,14 +552,10 @@ export default function Particles() {
     (u.uColorA.value as THREE.Color).lerp(tmpA, 1 - Math.exp(-3.5 * delta));
     (u.uColorB.value as THREE.Color).lerp(tmpB, 1 - Math.exp(-3.5 * delta));
 
-    // the field recedes while you read, returns when the type thins out —
-    // and when sound is on, it breathes with the drone
-    audioLvl.current += (audio.level() - audioLvl.current) * (1 - Math.exp(-4 * delta));
-    const targetOpacity =
-      THREE.MathUtils.lerp(SECTION_OPACITY[i0], SECTION_OPACITY[i1], f) *
-      (1 + audioLvl.current * 0.45);
+    // the field recedes while you read, and the type thins out naturally.
+    const targetOpacity = THREE.MathUtils.lerp(SECTION_OPACITY[i0], SECTION_OPACITY[i1], f);
     u.uOpacity.value += (targetOpacity - u.uOpacity.value) * (1 - Math.exp(-3 * delta));
-    u.uSize.value = 34 * (1 + audioLvl.current * 0.18);
+    u.uSize.value = 34;
   });
 
   return <points ref={points} geometry={geometry} material={material} frustumCulled={false} />;

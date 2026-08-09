@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { world } from "@/lib/world";
-import { audio } from "@/lib/audio";
 
 /**
  * "Leave your mark" — a full-screen pad. Visitors draw with light;
@@ -142,7 +141,6 @@ export default function Guestbook() {
       }
     }
     world.markQueue.push(new Float32Array(pts));
-    audio.click();
     setOpen(false);
   };
 

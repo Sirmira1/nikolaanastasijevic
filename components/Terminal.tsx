@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PROJECTS, SKILLS, SOCIALS, EMAIL } from "@/lib/data";
 import { world } from "@/lib/world";
-import { audio } from "@/lib/audio";
 import { toggleCalm } from "@/lib/calm";
 
 type LogLine = { text: string; kind?: "in" | "ember" | "dim" };
@@ -97,7 +96,6 @@ export default function Terminal() {
     const cmd = raw.trim().toLowerCase();
     if (!cmd) return;
     print([{ text: `> ${raw}`, kind: "in" }]);
-    audio.hover();
     const [head, ...rest] = cmd.split(/\s+/);
     const arg = rest.join(" ");
 
@@ -155,7 +153,6 @@ export default function Terminal() {
       case "boom":
         print([{ text: "detonating…", kind: "ember" }]);
         world.clickAt = { x: 0, y: 0, t: performance.now() / 1000, power: 3.2 };
-        audio.click();
         break;
       case "sudo":
         if (arg.startsWith("hire")) {
