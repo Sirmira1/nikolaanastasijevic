@@ -4,4 +4,3 @@ out
 dist
 .env
 .env.*
-tsconfig.tsbuildinfo

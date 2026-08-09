@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { audio } from "@/lib/audio";
 import { calmChosen, toggleCalm } from "@/lib/calm";
@@ -36,13 +35,7 @@ export default function Header({ visible }: { visible: boolean }) {
   const [calm, setCalm] = useState(false);
   useEffect(() => setCalm(calmChosen()), []);
 
-  // the section links point at anchors on the home page; from anywhere else
-  // they have to navigate there first, so let the browser handle it
-  const onHome = usePathname() === "/";
-  const at = (href: string) => (onHome ? href : `/${href}`);
-
   const go = (e: React.MouseEvent, href: string) => {
-    if (!onHome) return;
     e.preventDefault();
     const lenis = window.__lenis;
     if (lenis) lenis.scrollTo(href, { duration: 1.8, easing: (t: number) => 1 - Math.pow(1 - t, 4) });
@@ -64,7 +57,7 @@ export default function Header({ visible }: { visible: boolean }) {
       <div className="flex items-center justify-between px-5 py-5 md:px-8">
         <Magnetic strength={0.25}>
           <a
-            href={at("#top")}
+            href="#top"
             onClick={(e) => go(e, "#top")}
             className="font-display text-sm font-bold tracking-[0.15em] text-ink"
             aria-label="Back to top"
@@ -77,7 +70,7 @@ export default function Header({ visible }: { visible: boolean }) {
           {LINKS.map((l) => (
             <a
               key={l.n}
-              href={at(l.href)}
+              href={l.href}
               onClick={(e) => go(e, l.href)}
               className="group font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink"
             >

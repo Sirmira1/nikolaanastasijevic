@@ -9,14 +9,6 @@ import { calmMode } from "@/lib/calm";
 import Particles from "./Particles";
 import Trail from "./Trail";
 
-/**
- * How much world width the framing has to hold, in the units the shapes are
- * built in. The silhouettes are normalised to 8.4 across their longest side,
- * so this leaves them a margin either side rather than pressing them against
- * the glass.
- */
-const COVER = 9.9;
-
 function CameraRig() {
   const targetPos = useMemo(() => new THREE.Vector3(), []);
   const targetLook = useMemo(() => new THREE.Vector3(), []);
@@ -39,24 +31,6 @@ function CameraRig() {
     a.fromArray(CAMERA_KEYS[i0].look);
     b.fromArray(CAMERA_KEYS[i1].look);
     targetLook.lerpVectors(a, b, f);
-
-    /*
-     * The lens holds a fixed *vertical* angle, so a portrait phone does not
-     * simply see less of the scene — it crops the sides away. A car is 8.4
-     * units across and a 390px viewport frames barely 5 of them, which is why
-     * the shapes ran off both edges and sat on top of the copy. Backing the
-     * camera off until the width fits costs nothing on a desktop, where the
-     * framing already holds more than it needs and the factor lands on 1.
-     */
-    if ((camera as THREE.PerspectiveCamera).isPerspectiveCamera) {
-      const cam = camera as THREE.PerspectiveCamera;
-      const dist = targetPos.distanceTo(targetLook);
-      const halfV = Math.tan((cam.fov * Math.PI) / 360);
-      const width = 2 * dist * halfV * cam.aspect;
-      if (width > 0.01 && width < COVER) {
-        targetPos.sub(targetLook).multiplyScalar(COVER / width).add(targetLook);
-      }
-    }
 
     if (!world.reducedMotion) {
       // slow cinematic drift + cursor parallax

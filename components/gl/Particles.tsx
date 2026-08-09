@@ -5,7 +5,6 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { world, NUM_SHAPES, SHAPES, SECTION_PALETTES, SECTION_OPACITY } from "@/lib/world";
 import { markScale, sampleSignature } from "@/lib/signature";
-import { SILHOUETTES, sampleSilhouette } from "@/lib/silhouettes";
 import { audio } from "@/lib/audio";
 
 /* ------------------------------------------------------------------ */
@@ -133,22 +132,6 @@ const shapeFns: ShapeFn[] = [
   },
 ];
 
-/** Copies sampled xyz into one formation's rows of the shape texture. */
-function writeShape(
-  data: Float32Array,
-  points: Float32Array,
-  count: number,
-  shape: number
-) {
-  for (let i = 0; i < count; i++) {
-    const o = (shape * count + i) * 4;
-    data[o] = points[i * 3];
-    data[o + 1] = points[i * 3 + 1];
-    data[o + 2] = points[i * 3 + 2];
-    data[o + 3] = 1;
-  }
-}
-
 function writeSignature(data: Float32Array, signature: Float32Array, count: number) {
   for (let i = 0; i < count; i++) {
     const o = i * 4;
@@ -167,14 +150,7 @@ function buildShapeTexture(size: number) {
   for (let s = 1; s < NUM_SHAPES; s++) {
     const fn = shapeFns[s - 1];
     for (let i = 0; i < count; i++) {
-      if (fn) {
-        fn(i, count, v);
-      } else {
-        // a slot the silhouettes will fill once they are sampled. A loose
-        // cloud rather than zeroes, so nothing collapses to a point if the
-        // field reaches this formation first.
-        v.set(gauss() * 2.6, gauss() * 2.2, gauss() * 1.4);
-      }
+      fn(i, count, v);
       const o = (s * count + i) * 4;
       data[o] = v.x;
       data[o + 1] = v.y;
@@ -497,75 +473,6 @@ export default function Particles() {
       active = false;
     };
   }, [count, geometry, material]);
-
-  /**
-   * The silhouettes, sampled after first paint. A dozen rasterises and scans
-   * is a few hundred milliseconds of main thread — worth waiting for an idle
-   * moment rather than spending it while the page is arriving.
-   *
-   * Each one is written to the slot its own key names, not to an offset from
-   * the first: the two lists are edited independently, and a shape inserted
-   * into the middle of SHAPES used to silently shift every silhouette after
-   * it onto the wrong formation.
-   *
-   * Two things about the upload, because the atlas is not small — every
-   * formation for every particle, which at this size is six and a half
-   * megabytes. Marking it dirty after each shape re-sent the whole thing
-   * twelve times, seventy-nine megabytes of texture traffic on every page
-   * load, including the home page where no silhouette is ever on screen. It
-   * goes up once for the shape you are about to look at and once more when
-   * the rest have landed.
-   *
-   * And they are sampled nearest-first: whichever formation the field is
-   * closest to right now is the one worth having early, so arriving on the
-   * off-work page fills in the car before it fills in the football.
-   */
-  useEffect(() => {
-    let active = true;
-    const run = async () => {
-      const texture = material.uniforms.uShapes.value as THREE.DataTexture;
-      const data = texture.image.data as Float32Array;
-
-      const queue = SILHOUETTES.map((s) => ({
-        silhouette: s,
-        slot: (SHAPES as readonly string[]).indexOf(s.key),
-      }));
-      for (const item of queue) {
-        if (item.slot < 0) {
-          console.error("Silhouette has no formation in SHAPES", item.silhouette.key);
-        }
-      }
-      const here = world.blend;
-      const pending = queue
-        .filter((q) => q.slot >= 0)
-        .sort((a, b) => Math.abs(a.slot - here) - Math.abs(b.slot - here));
-
-      let landed = 0;
-      for (const { silhouette, slot } of pending) {
-        if (!active) return;
-        try {
-          const points = await sampleSilhouette(silhouette, count);
-          if (!active) return;
-          writeShape(data, points, count, slot);
-          landed++;
-          // the first one is the one you might be looking at; the rest can
-          // travel together
-          if (landed === 1) texture.needsUpdate = true;
-        } catch (error) {
-          console.error("Could not sample silhouette", silhouette.key, error);
-        }
-      }
-      if (active && landed > 1) texture.needsUpdate = true;
-    };
-    const idle = (window as unknown as {
-      requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
-    }).requestIdleCallback;
-    const id = idle ? idle(run, { timeout: 2500 }) : window.setTimeout(run, 900);
-    return () => {
-      active = false;
-      if (!idle) window.clearTimeout(id as number);
-    };
-  }, [count, material]);
 
   useFrame(({ camera, clock }, dt) => {
     const u = material.uniforms;

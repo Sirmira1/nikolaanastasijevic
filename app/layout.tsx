@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Syne, Instrument_Serif, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import { SITE_URL } from "@/lib/site";
 
 const syne = Syne({
   subsets: ["latin"],
@@ -26,14 +25,11 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  alternates: { canonical: "/" },
+  metadataBase: new URL("https://www.nikolaanastasijevic.com"),
   title: "Nikola Anastasijević — Software Developer in Hamilton",
   description:
     "Nikola Anastasijević is a software developer in Hamilton, Ontario building full-stack products across maps, automotive, finance, live trading data, and immersive 3D web experiences.",
   openGraph: {
-    url: "/",
-    siteName: "Nikola Anastasijević",
     title: "Nikola Anastasijević — Software Developer",
     description:
       "Full-stack products, mobile apps, and 3D web experiences built in Hamilton, Ontario.",

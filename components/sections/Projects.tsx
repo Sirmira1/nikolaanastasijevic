@@ -161,37 +161,22 @@ export default function Projects() {
                     onFocus={() => setHovered(i)}
                     onBlur={() => setHovered(null)}
                   >
-                    {/*
-                      Three columns on a desktop, where a title fits between
-                      its index and its year. On a phone there is no room for
-                      that: a grid track is min-width:auto, so a title wider
-                      than its share does not wrap or shrink, it pushes the
-                      year clean off the screen and takes its own tail with it.
-                      The title gets a row of its own below the meta instead —
-                      which is also simply the better way round at that width.
-
-                      9vw is set by TRADEBOT, the longest title with nowhere to
-                      wrap: it fills the row at 9.44vw on a 360px screen, and
-                      the ceiling falls as the viewport narrows because the
-                      padding either side does not. The wrap rule below it is a
-                      net for a future title longer still, not the mechanism.
-                    */}
                     <div
-                      className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-2 transition-opacity duration-500 md:grid-cols-[auto_1fr_auto] md:gap-x-10"
+                      className="grid grid-cols-[auto_1fr_auto] items-baseline gap-4 transition-opacity duration-500 md:gap-10"
                       style={{ opacity: isDimmed ? 0.25 : 1 }}
                     >
-                      <span className="order-1 font-mono text-[10px] tracking-[0.3em] text-dim md:order-none">
+                      <span className="font-mono text-[10px] tracking-[0.3em] text-dim">
                         {p.index}
                       </span>
                       <h3
-                        className={`text-stroke order-3 col-span-2 font-display text-[9vw] font-extrabold leading-[0.95] tracking-tight transition-all duration-500 [overflow-wrap:anywhere] md:order-none md:col-span-1 md:text-[6.5vw] ${
+                        className={`text-stroke font-display text-[11vw] font-extrabold leading-[0.95] tracking-tight transition-all duration-500 md:text-[6.5vw] ${
                           isActive ? "translate-x-3" : ""
                         }`}
                         style={isActive ? { color: p.accent, WebkitTextStroke: "0px" } : undefined}
                       >
                         {p.title}
                       </h3>
-                      <span className="order-2 text-right font-mono text-[10px] uppercase leading-relaxed tracking-[0.2em] text-dim md:order-none">
+                      <span className="text-right font-mono text-[10px] uppercase leading-relaxed tracking-[0.2em] text-dim">
                         {p.year}
                         <br className="hidden md:block" />
                         <span className="hidden text-ink/60 md:inline">{p.role}</span>
