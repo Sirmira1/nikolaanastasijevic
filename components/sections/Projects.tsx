@@ -238,7 +238,15 @@ export default function Projects() {
             <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-ember">
               Beyond the selected four
             </span>
-            <p className="max-w-2xl font-display text-2xl font-semibold leading-[1.4] text-ink md:text-4xl md:leading-[1.6]">
+            {/*
+              Set in the serif, not the display face. Syne draws its descenders
+              as short blunt stubs — measured against a bare page at the same
+              size, the g in "backlog" ends in twelve pixel rows of constant
+              width and simply stops. Nothing here was clipping it, which is
+              why no amount of line-height ever fixed it; the only cure is a
+              face whose tails are actually drawn.
+            */}
+            <p className="max-w-2xl font-serif text-[1.75rem] leading-[1.35] text-ink md:text-[2.6rem]">
               The backlog moves between cars, maps, money, local businesses,
               and whatever I wish existed next.
             </p>
