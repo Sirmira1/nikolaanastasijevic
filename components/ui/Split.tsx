@@ -188,7 +188,11 @@ export function SectionLabel({ index, title }: { index: string; title: string })
     <Rise className="mb-14 flex items-center gap-4 md:mb-20">
       <span className="font-mono text-xs tracking-[0.25em] text-ember">{index}</span>
       <span className="h-px w-12 bg-ink/20" />
-      <span className="font-mono text-xs uppercase tracking-[0.25em] text-dim">{title}</span>
+      {/* the heading for the section it labels — as spans, every page ran its
+          h1 straight into the h3 of its first card */}
+      <h2 className="font-mono text-xs font-normal uppercase tracking-[0.25em] text-dim">
+        {title}
+      </h2>
     </Rise>
   );
 }

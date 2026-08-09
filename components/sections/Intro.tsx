@@ -110,9 +110,11 @@ export default function Intro() {
             <span className="font-mono text-[9px] uppercase tracking-[0.26em] text-ember md:text-[10px]">
               Software Developer
             </span>
-            <h2 className="mt-1 font-display text-xl font-bold leading-none text-ink sm:text-2xl md:text-4xl">
+            {/* not a heading: this is the entry card, and the page's heading
+                is the hero underneath it */}
+            <p className="mt-1 font-display text-xl font-bold leading-none text-ink sm:text-2xl md:text-4xl">
               Nikola Anastasijević
-            </h2>
+            </p>
           </div>
 
           <p className="col-span-2 max-w-xl font-mono text-[10px] leading-relaxed text-dim sm:text-xs md:col-span-1">

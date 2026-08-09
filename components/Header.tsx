@@ -59,14 +59,14 @@ export default function Header({ visible }: { visible: boolean }) {
           <a
             href="#top"
             onClick={(e) => go(e, "#top")}
-            className="font-display text-sm font-bold tracking-[0.15em] text-ink"
+            className="whitespace-nowrap font-display text-sm font-bold tracking-[0.15em] text-ink"
             aria-label="Back to top"
           >
             N.A<span className="text-ember">—</span>26
           </a>
         </Magnetic>
 
-        <nav aria-label="Sections" className="hidden items-center gap-7 lg:flex">
+        <nav aria-label="Sections" className="hidden items-center gap-5 lg:flex xl:gap-7">
           {LINKS.map((l) => (
             <a
               key={l.n}
@@ -81,14 +81,14 @@ export default function Header({ visible }: { visible: boolean }) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-6">
-          <span className="hidden font-mono text-[10px] tracking-[0.2em] text-ink/70 md:inline">
+        <div className="flex items-center gap-4 md:gap-6">
+          <span className="hidden whitespace-nowrap font-mono text-[10px] tracking-[0.2em] text-ink/70 xl:inline">
             HAMILTON&nbsp;<Clock />
           </span>
           <Magnetic strength={0.4}>
             <button
               onClick={toggleCalm}
-              className="hidden items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink sm:flex"
+              className="hidden items-center gap-2 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink sm:flex lg:hidden xl:flex"
               aria-pressed={calm}
               aria-label={calm ? "Turn effects back on" : "Calm mode: same content, no effects"}
               title={calm ? "Bring back the full experience" : "Same content, no effects"}
@@ -105,7 +105,7 @@ export default function Header({ visible }: { visible: boolean }) {
           <Magnetic strength={0.4}>
             <button
               onClick={() => window.dispatchEvent(new Event("open-terminal"))}
-              className="hidden font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink sm:inline"
+              className="hidden whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink sm:inline lg:hidden xl:inline"
               aria-label="Open console"
             >
               <span className="text-ember">/</span>&nbsp;CONSOLE
@@ -114,7 +114,7 @@ export default function Header({ visible }: { visible: boolean }) {
           <Magnetic strength={0.4}>
             <button
               onClick={() => setSound(audio.toggle())}
-              className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink"
+              className="flex items-center gap-2 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.28em] text-ink/85 transition-colors hover:text-ink"
               aria-pressed={sound}
               aria-label={sound ? "Mute sound" : "Enable sound"}
             >
@@ -132,8 +132,31 @@ export default function Header({ visible }: { visible: boolean }) {
                   />
                 ))}
               </span>
-              {sound ? "SOUND ON" : "SOUND OFF"}
+              <span className="hidden sm:inline">{sound ? "SOUND ON" : "SOUND OFF"}</span>
             </button>
+          </Magnetic>
+
+          {/*
+            The way to reach me, in the one place that is on screen the whole
+            way down. Everything else here adjusts the experience; this is the
+            only control that exists for the visitor's benefit rather than the
+            site's, so it is the only one that gets a border — and it is the
+            one thing in the bar that never hides on a narrow screen.
+          */}
+          <Magnetic strength={0.4}>
+            <a
+              href="#talk"
+              onClick={(e) => go(e, "#talk")}
+              data-cursor="TALK"
+              className="group flex items-center gap-2 whitespace-nowrap border border-ember/55 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink transition-colors duration-300 hover:border-ember hover:bg-ember hover:text-void md:gap-3 md:px-4 md:tracking-[0.28em]"
+            >
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 shrink-0 rounded-full bg-ember transition-transform duration-500 group-hover:scale-150 group-hover:bg-void"
+              />
+              <span className="hidden sm:inline">Start a project</span>
+              <span className="sm:hidden">Hire me</span>
+            </a>
           </Magnetic>
         </div>
       </div>

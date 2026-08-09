@@ -169,32 +169,41 @@ export type Experiment = {
   image?: string;
 };
 
+/**
+ * The wall, in the order it is walked.
+ *
+ * Deliberately not grouped by kind. Sorted into design studies, then app
+ * extracts, then 3D builds, it read as a list of categories and the last
+ * third carried the first two — so the order alternates instead, and the
+ * three biggest plates in the column pattern (positions 1, 4 and 7) are given
+ * to the three 3D builds, which are the ones worth stopping for.
+ *
+ * Nothing ships here without a capture. Two placeholders and a shot of this
+ * very website used to sit in the run; a wall advertising the page you are
+ * already standing on, next to two frames of nothing, is not a portfolio.
+ */
 export const EXPERIMENTS: Experiment[] = [
-  { index: "E—01", title: "SOFT", medium: "Design study — minimal Gen Z aesthetic", gradient: ["#1b0f3d", "#c9a2ff"], href: "https://soft-design.vercel.app/", image: "/img/Screenshot 2026-07-03 095957.png" },
-  { index: "E—02", title: "NOIR", medium: "Design study — high-contrast cinema", gradient: ["#12122e", "#6ea8ff"], href: "https://mysterious-design.vercel.app/", image: "/img/Screenshot 2026-07-03 100331.png" },
-  { index: "E—03", title: "CASUAL", medium: "Design study — approachable modern", gradient: ["#231a02", "#ffb454"], href: "https://casual-design-five.vercel.app/", image: "/img/Screenshot 2026-07-03 100054.png" },
-  { index: "E—04", title: "FOG OF WAR", medium: "Mapbox exploration mask from FlyBy", gradient: ["#032622", "#3fd2c7"], image: "/img/Screenshot 2026-07-08 112150.png" },
-  { index: "E—05", title: "BACKTEST RIG", medium: "Trading strategies, simulated overnight", gradient: ["#26043a", "#ff6ad5"], image: "/img/Screenshot 2026-07-08 112603.png" },
-  { index: "E—06", title: "THE OBSERVATORY", medium: "This website — 16,000 particles deep", gradient: ["#2d0a02", "#ff5c28"], image: "/img/Screenshot 2026-07-08 112400.png" },
-
-  /* ---- the 3D builds. Order here is the order along the wall, and the
-     column pattern gives every other one a bigger plate — so THE HALL takes
-     a wide slot and APEX the narrow one after it. Still no links: add `href`
-     to any of these and the plate becomes a visit. ---- */
+  { index: "E—01", title: "APEX", medium: "Portfolio at racing pace — 3D garage", gradient: ["#2a0604", "#ff5c28"], image: "/img/lab-apex.webp" },
+  { index: "E—02", title: "SOFT", medium: "Design study — minimal Gen Z aesthetic", gradient: ["#1b0f3d", "#c9a2ff"], href: "https://soft-design.vercel.app/", image: "/img/Screenshot 2026-07-03 095957.png" },
+  { index: "E—03", title: "FOG OF WAR", medium: "Mapbox exploration mask from FlyBy", gradient: ["#032622", "#3fd2c7"], image: "/img/Screenshot 2026-07-08 112150.png" },
+  { index: "E—04", title: "OVERCLOCK", medium: "Cyber build — a 3D core in motion", gradient: ["#050b1e", "#6ea8ff"], image: "/img/lab-overclock.webp" },
+  { index: "E—05", title: "NOIR", medium: "Design study — high-contrast cinema", gradient: ["#12122e", "#6ea8ff"], href: "https://mysterious-design.vercel.app/", image: "/img/Screenshot 2026-07-03 100331.png" },
+  { index: "E—06", title: "BACKTEST RIG", medium: "Trading strategies, simulated overnight", gradient: ["#26043a", "#ff6ad5"], image: "/img/Screenshot 2026-07-08 112603.png" },
   { index: "E—07", title: "THE HALL", medium: "Portfolio as a walkable 3D museum", gradient: ["#150f07", "#d8b271"], image: "/img/lab-the-hall.webp" },
-  { index: "E—08", title: "APEX", medium: "Portfolio at racing pace — 3D garage", gradient: ["#2a0604", "#ff5c28"], image: "/img/lab-apex.webp" },
-  { index: "E—09", title: "OVERCLOCK", medium: "Cyber build — a 3D core in motion", gradient: ["#050b1e", "#6ea8ff"], image: "/img/lab-overclock.webp" },
-
-  /* ---- still placeholders: no capture yet. PLACEHOLDER is in the visible
-     caption on purpose, so neither can quietly ship as finished work. ---- */
-  { index: "E—10", title: "MEADOW", medium: "Placeholder — 3D grass world you can walk", gradient: ["#0a1c08", "#8ede5a"] },
-  { index: "E—11", title: "UNTITLED", medium: "Placeholder — next experiment", gradient: ["#15121d", "#9c96ff"] },
-];
-
-export const SOCIALS = [
-  { label: "GitHub", href: "https://github.com/Sirmira1" },
-  { label: "LinkedIn", href: "https://linkedin.com/in/nikola-anastasijevic-a737632ba/" },
-  { label: "Website", href: "https://www.nikolaanastasijevic.com" },
+  { index: "E—08", title: "CASUAL", medium: "Design study — approachable modern", gradient: ["#231a02", "#ffb454"], href: "https://casual-design-five.vercel.app/", image: "/img/Screenshot 2026-07-03 100054.png" },
 ];
 
 export const EMAIL = "nikolaanastasijevic0@gmail.com";
+
+/**
+ * Where to find me, in the footer and in the console.
+ *
+ * Email rather than a link back to this website: a visitor reading the footer
+ * is already on the website, and the one thing they might want from it at
+ * that point is a way to get hold of me.
+ */
+export const SOCIALS = [
+  { label: "Email", href: `mailto:${EMAIL}` },
+  { label: "GitHub", href: "https://github.com/Sirmira1" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/nikola-anastasijevic-a737632ba/" },
+];

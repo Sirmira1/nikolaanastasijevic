@@ -73,9 +73,20 @@ export default function Hero() {
         transition={{ duration: 0.9, delay: 0.35 }}
       >
         <span className="max-w-[76ch] text-ink/80">
-          I turn ideas into working products — from a fog-of-war driving map
-          and live trading systems to paid rental bookings and software for my
-          own garage.
+          I build websites, apps and software for people who need the real
+          thing — designed, built and shipped by one person, from the first
+          sketch to the live URL.{" "}
+          <a
+            href="#talk"
+            onClick={(e) => {
+              e.preventDefault();
+              document.querySelector("#talk")?.scrollIntoView({ behavior: "smooth" });
+            }}
+            data-cursor="TALK"
+            className="whitespace-nowrap text-ember underline decoration-ember/40 underline-offset-4 transition-colors hover:decoration-ember"
+          >
+            Available for work →
+          </a>
         </span>
         <span className="hidden text-right uppercase tracking-[0.24em] sm:block">
           WEB / MOBILE / DATA / 3D

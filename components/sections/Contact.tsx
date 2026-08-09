@@ -75,14 +75,35 @@ export default function Contact() {
           </Magnetic>
         </Rise>
 
-        <Rise delay={0.3} className="flex flex-col items-center gap-2 font-mono text-xs text-dim">
+        <Rise delay={0.3} className="flex flex-col items-center gap-3 font-mono text-xs text-dim">
           <a href={`mailto:${EMAIL}`} className="group relative text-ink transition-colors hover:text-ember">
             {EMAIL}
             <span className="absolute -bottom-1 left-0 block h-px w-0 bg-ember transition-all duration-300 group-hover:w-full" />
           </a>
           <span className="text-[10px] uppercase tracking-[0.25em] text-ink/75">
-            Usually replies within 24h — open to co-ops, freelance builds & good problems
+            Usually replies within 24h — Hamilton, Ontario, working anywhere
           </span>
+          {/*
+            What I will actually take on, said plainly. Someone deciding
+            whether to email a stranger should not have to infer it from four
+            case studies.
+          */}
+          <ul
+            role="list"
+            className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-[10px] uppercase tracking-[0.2em]"
+          >
+            {[
+              "Websites",
+              "Web apps",
+              "Mobile apps",
+              "3D / interactive",
+              "Automation & AI",
+            ].map((s) => (
+              <li key={s} className="rounded-full border border-ink/25 px-3 py-1 text-ink/80">
+                {s}
+              </li>
+            ))}
+          </ul>
         </Rise>
 
         <Rise delay={0.4}>
@@ -105,7 +126,8 @@ export default function Contact() {
               <a
                 key={s.label}
                 href={s.href}
-                target="_blank"
+                /* a mailto opened in a new tab hands back an empty one */
+                target={s.href.startsWith("http") ? "_blank" : undefined}
                 rel="noreferrer"
                 className="group relative transition-colors hover:text-ink"
               >
