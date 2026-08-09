@@ -234,11 +234,11 @@ export default function Projects() {
         </Rise>
 
         <div className="mt-28 border-t border-line pt-8 md:mt-36">
-          <div className="mb-10 grid gap-4 md:grid-cols-[1fr_2fr] md:items-end">
+          <div className="mb-14 grid gap-4 md:grid-cols-[1fr_2fr] md:items-end">
             <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-ember">
               Beyond the selected four
             </span>
-            <p className="max-w-2xl font-display text-2xl font-semibold leading-[1.1] text-ink md:text-4xl">
+            <p className="max-w-2xl font-display text-2xl font-semibold leading-[1.4] text-ink md:text-4xl md:leading-[1.6]">
               The backlog moves between cars, maps, money, local businesses,
               and whatever I wish existed next.
             </p>
