@@ -37,7 +37,6 @@ GSAP + ScrollTrigger · Lenis · Framer Motion · Web Audio (generative, no asse
   computes the continuous section blend that drives morph, palette and camera.
 - `components/sections/*` — each section has its own layout language; the lab
   is a GSAP-pinned horizontal scroll.
-- `lib/audio.ts` — synthesized ambient drone + hover/click blips, off by default.
 
 ## Customize
 
