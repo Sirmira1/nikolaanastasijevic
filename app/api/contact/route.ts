@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { EMAIL } from "@/lib/data";
+import { LIMITS, validate } from "@/lib/contact";
 
 /**
  * Where the contact form's messages go.
@@ -19,31 +20,6 @@ import { EMAIL } from "@/lib/data";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const LIMITS = { name: 80, email: 160, company: 120, message: 4000 };
-const MIN_MESSAGE = 10;
-
-/** Deliberately loose. The address is verified by replying to it, not by regex. */
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-type Field = "name" | "email" | "message";
-type Bad = { field: Field; error: string };
-
-function validate(body: Record<string, unknown>): Bad | null {
-  const name = String(body.name ?? "").trim();
-  const email = String(body.email ?? "").trim();
-  const message = String(body.message ?? "").trim();
-
-  if (!name) return { field: "name", error: "Tell me who you are." };
-  if (name.length > LIMITS.name) return { field: "name", error: "That name is too long." };
-  if (!email) return { field: "email", error: "I need somewhere to reply." };
-  if (email.length > LIMITS.email || !EMAIL_RE.test(email))
-    return { field: "email", error: "That email address doesn't look right." };
-  if (message.length < MIN_MESSAGE)
-    return { field: "message", error: "A sentence or two about the project, please." };
-  if (message.length > LIMITS.message)
-    return { field: "message", error: "That message is longer than this form takes." };
-  return null;
-}
 
 /**
  * A small speed bump, not a security control.
@@ -152,8 +128,8 @@ export async function POST(request: Request) {
   // Answer 200 so the bot has nothing to learn from the difference.
   if (String(body.website ?? "").trim()) return NextResponse.json({ ok: true });
 
-  const bad = validate(body);
-  if (bad) return NextResponse.json(bad, { status: 400 });
+  const errors = validate(body);
+  if (Object.keys(errors).length) return NextResponse.json({ errors }, { status: 400 });
 
   const ip =
     request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||

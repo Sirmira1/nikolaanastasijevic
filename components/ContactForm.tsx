@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { EMAIL, SERVICES, BUDGETS } from "@/lib/data";
+import { FIELDS, validate, type Field, type Errors as FieldErrors } from "@/lib/contact";
 
 /**
  * The way in, without leaving.
@@ -17,14 +18,28 @@ import { EMAIL, SERVICES, BUDGETS } from "@/lib/data";
  */
 
 type State = "idle" | "sending" | "sent";
-type Errors = Partial<Record<"name" | "email" | "message" | "form", string>>;
+/** field problems, plus one slot for whatever went wrong with the send itself */
+type Errors = FieldErrors & { form?: string };
 
 const FIELD =
-  "w-full border border-ink/25 bg-void/60 px-4 py-3 font-mono text-[16px] text-ink " +
+  "w-full border bg-void/60 px-4 py-3 font-mono text-[16px] text-ink " +
   "placeholder:text-ink/30 outline-none transition-colors duration-300 " +
   "focus:border-ember focus:ring-1 focus:ring-ember/40 md:text-sm";
 
+/** a bad field keeps the ember edge whether or not the caret is in it */
+const fieldClass = (bad?: string) => `${FIELD} ${bad ? "border-ember" : "border-ink/25"}`;
+
 const LABEL = "mb-2 block font-mono text-[10px] uppercase tracking-[0.28em] text-dim";
+
+/** the one repeated bit of error furniture: a mark, then what is wrong */
+function FieldError({ id, children }: { id: string; children: React.ReactNode }) {
+  return (
+    <p id={id} role="alert" className="mt-2 flex items-start gap-2 font-mono text-[10px] leading-relaxed text-ember">
+      <span aria-hidden="true" className="mt-[3px] block h-1 w-1 shrink-0 rounded-full bg-ember" />
+      {children}
+    </p>
+  );
+}
 
 export default function ContactForm() {
   const [open, setOpen] = useState(false);
@@ -106,6 +121,43 @@ export default function ContactForm() {
   const toggleKind = (k: string) =>
     setKinds((prev) => (prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k]));
 
+  /**
+   * An error you have to go looking for is an error you did not see. The panel
+   * scrolls, so put the topmost bad field in the middle of it and give it the
+   * caret — the message underneath then arrives in the same glance.
+   */
+  const goToFirst = (found: Errors) => {
+    const field = FIELDS.find((f) => found[f]);
+    if (!field) return;
+    const el = panelRef.current?.querySelector<HTMLElement>(`#cf-${field}`);
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    // after the scroll, so focus does not fight it for the scroll position
+    setTimeout(() => el?.focus({ preventScroll: true }), 260);
+  };
+
+  /**
+   * The send-level error sits just above the pinned footer, which means on a
+   * short panel it lands underneath it — you press Send and, as far as you can
+   * tell, nothing happens. Bring it into view once React has painted it.
+   */
+  const showFormError = () =>
+    requestAnimationFrame(() =>
+      panelRef.current
+        ?.querySelector("#cf-form-err")
+        ?.scrollIntoView({ behavior: "smooth", block: "center" })
+    );
+
+  /** a corrected field should stop looking wrong straight away, not at next send */
+  const clearOne = (e: React.FormEvent<HTMLFormElement>) => {
+    const name = (e.target as HTMLInputElement).name as Field;
+    if (!name || !errors[name]) return;
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
+  };
+
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -119,6 +171,16 @@ export default function ContactForm() {
       kinds,
       budget,
     };
+
+    // checked here as well as on the server, so a typo costs a glance rather
+    // than a round trip
+    const local = validate(payload);
+    if (Object.keys(local).length) {
+      setErrors(local);
+      setFallback("");
+      goToFirst(local);
+      return;
+    }
 
     setState("sending");
     setErrors({});
@@ -140,8 +202,9 @@ export default function ContactForm() {
         return;
       }
 
-      if (res.status === 400 && body.field) {
-        setErrors({ [body.field]: body.error });
+      if (res.status === 400 && body.errors) {
+        setErrors(body.errors);
+        goToFirst(body.errors);
       } else if (res.status === 503 || res.status === 502) {
         // nothing is wired up on the server, or the provider is down — rather
         // than lose what they wrote, hand it to their mail client intact
@@ -158,11 +221,14 @@ export default function ContactForm() {
           )}&body=${encodeURIComponent(lines.join("\n"))}`
         );
         setErrors({ form: "The inbox link isn't live yet — send it as an email instead." });
+        showFormError();
       } else {
         setErrors({ form: body.error || "Something went wrong. Try again in a moment." });
+        showFormError();
       }
     } catch {
       setErrors({ form: "No connection. Check your network and try again." });
+      showFormError();
     }
     setState("idle");
   };
@@ -237,7 +303,12 @@ export default function ContactForm() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={submit} noValidate className="flex flex-col gap-6 px-5 pb-0 pt-7 md:px-8 md:pt-9">
+              <form
+                onSubmit={submit}
+                onInput={clearOne}
+                noValidate
+                className="flex flex-col gap-6 px-5 pb-0 pt-7 md:px-8 md:pt-9"
+              >
                 <div>
                   <h2
                     id="contact-form-title"
@@ -265,13 +336,9 @@ export default function ContactForm() {
                       placeholder="Your name"
                       aria-invalid={!!errors.name}
                       aria-describedby={errors.name ? "cf-name-err" : undefined}
-                      className={`${FIELD} ${errors.name ? "border-ember" : ""}`}
+                      className={fieldClass(errors.name)}
                     />
-                    {errors.name && (
-                      <p id="cf-name-err" role="alert" className="mt-2 font-mono text-[10px] text-ember">
-                        {errors.name}
-                      </p>
-                    )}
+                    {errors.name && <FieldError id="cf-name-err">{errors.name}</FieldError>}
                   </div>
 
                   <div>
@@ -289,13 +356,9 @@ export default function ContactForm() {
                       placeholder="you@company.com"
                       aria-invalid={!!errors.email}
                       aria-describedby={errors.email ? "cf-email-err" : undefined}
-                      className={`${FIELD} ${errors.email ? "border-ember" : ""}`}
+                      className={fieldClass(errors.email)}
                     />
-                    {errors.email && (
-                      <p id="cf-email-err" role="alert" className="mt-2 font-mono text-[10px] text-ember">
-                        {errors.email}
-                      </p>
-                    )}
+                    {errors.email && <FieldError id="cf-email-err">{errors.email}</FieldError>}
                   </div>
                 </div>
 
@@ -374,13 +437,9 @@ export default function ContactForm() {
                     placeholder="What it is, roughly when you need it, and anything you already know you want."
                     aria-invalid={!!errors.message}
                     aria-describedby={errors.message ? "cf-message-err" : undefined}
-                    className={`${FIELD} resize-y ${errors.message ? "border-ember" : ""}`}
+                    className={`${fieldClass(errors.message)} resize-y`}
                   />
-                  {errors.message && (
-                    <p id="cf-message-err" role="alert" className="mt-2 font-mono text-[10px] text-ember">
-                      {errors.message}
-                    </p>
-                  )}
+                  {errors.message && <FieldError id="cf-message-err">{errors.message}</FieldError>}
                 </div>
 
                 {/* not shown to anyone; a filled value means a bot walked the form */}
@@ -389,14 +448,23 @@ export default function ContactForm() {
                   <input id="cf-website" name="website" tabIndex={-1} autoComplete="off" />
                 </div>
 
+                {/* the send itself failed rather than a field — same voice, but
+                    it gets a rule around it so it does not read as a caption */}
                 {errors.form && (
-                  <p role="alert" className="font-mono text-[11px] leading-relaxed text-ember">
-                    {errors.form}{" "}
-                    {fallback && (
-                      <a href={fallback} className="underline underline-offset-4 hover:text-ink">
-                        Open it in mail
-                      </a>
-                    )}
+                  <p
+                    id="cf-form-err"
+                    role="alert"
+                    className="flex items-start gap-2 border border-ember/40 bg-ember/5 px-4 py-3 font-mono text-[11px] leading-relaxed text-ember"
+                  >
+                    <span aria-hidden="true" className="mt-[6px] block h-1 w-1 shrink-0 rounded-full bg-ember" />
+                    <span>
+                      {errors.form}{" "}
+                      {fallback && (
+                        <a href={fallback} className="underline underline-offset-4 hover:text-ink">
+                          Open it in mail
+                        </a>
+                      )}
+                    </span>
                   </p>
                 )}
 
