@@ -57,7 +57,7 @@ export default function Header({ visible }: { visible: boolean }) {
           <a
             href="#top"
             onClick={(e) => go(e, "#top")}
-            className="whitespace-nowrap font-display text-sm font-bold tracking-[0.15em] text-ink"
+            className="tap whitespace-nowrap font-display text-sm font-bold tracking-[0.15em] text-ink"
             aria-label="Back to top"
           >
             N.A<span className="text-ember">—</span>26
@@ -116,13 +116,16 @@ export default function Header({ visible }: { visible: boolean }) {
             only control that exists for the visitor's benefit rather than the
             site's, so it is the only one that gets a border — and it is the
             one thing in the bar that never hides on a narrow screen.
+
+            It opens the form rather than scrolling to the foot of the page:
+            somebody who has decided to get in touch should not have to travel
+            the whole site again to do it.
           */}
           <Magnetic strength={0.4}>
-            <a
-              href="#talk"
-              onClick={(e) => go(e, "#talk")}
+            <button
+              onClick={() => window.dispatchEvent(new Event("open-contact"))}
               data-cursor="TALK"
-              className="group flex items-center gap-2 whitespace-nowrap border border-ember/55 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink transition-colors duration-300 hover:border-ember hover:bg-ember hover:text-void md:gap-3 md:px-4 md:tracking-[0.28em]"
+              className="tap-solid group flex items-center gap-2 whitespace-nowrap border border-ember/55 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink transition-colors duration-300 hover:border-ember hover:bg-ember hover:text-void md:gap-3 md:px-4 md:tracking-[0.28em]"
             >
               <span
                 aria-hidden="true"
@@ -130,7 +133,7 @@ export default function Header({ visible }: { visible: boolean }) {
               />
               <span className="hidden sm:inline">Start a project</span>
               <span className="sm:hidden">Hire me</span>
-            </a>
+            </button>
           </Magnetic>
         </div>
       </div>

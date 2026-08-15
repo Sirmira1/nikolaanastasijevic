@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { EMAIL, SOCIALS } from "@/lib/data";
+import { EMAIL, SERVICES, SOCIALS } from "@/lib/data";
 import { SectionLabel, RevealLines, Line, Rise } from "@/components/ui/Split";
 import Magnetic from "@/components/ui/Magnetic";
 
@@ -56,10 +56,17 @@ export default function Contact() {
           <Line>REAL</Line>
         </RevealLines>
 
+        {/*
+          The portal opens the form rather than the visitor's mail client.
+          Handing someone off to whatever mail app the machine has configured
+          is the one moment on this site where the site stops being in charge
+          of the experience — and on a work desktop it is often a dead end.
+          The address below is still a mailto for anyone who prefers it.
+        */}
         <Rise delay={0.2}>
           <Magnetic strength={0.45}>
-            <a
-              href={`mailto:${EMAIL}`}
+            <button
+              onClick={() => window.dispatchEvent(new Event("open-contact"))}
               data-cursor="SEND"
               className="group relative flex h-40 w-40 items-center justify-center rounded-full border border-ink/40 bg-void/75 backdrop-blur-[3px] transition-colors duration-500 hover:border-ember md:h-48 md:w-48"
             >
@@ -71,12 +78,12 @@ export default function Contact() {
                 SAY HELLO
                 <span aria-hidden="true" className="mt-1 block text-base tracking-normal">↗</span>
               </span>
-            </a>
+            </button>
           </Magnetic>
         </Rise>
 
         <Rise delay={0.3} className="flex flex-col items-center gap-3 font-mono text-xs text-dim">
-          <a href={`mailto:${EMAIL}`} className="group relative text-ink transition-colors hover:text-ember">
+          <a href={`mailto:${EMAIL}`} className="tap group relative text-ink transition-colors hover:text-ember">
             {EMAIL}
             <span className="absolute -bottom-1 left-0 block h-px w-0 bg-ember transition-all duration-300 group-hover:w-full" />
           </a>
@@ -92,13 +99,7 @@ export default function Contact() {
             role="list"
             className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-[10px] uppercase tracking-[0.2em]"
           >
-            {[
-              "Websites",
-              "Web apps",
-              "Mobile apps",
-              "3D / interactive",
-              "Automation & AI",
-            ].map((s) => (
+            {SERVICES.map((s) => (
               <li key={s} className="rounded-full border border-ink/25 px-3 py-1 text-ink/80">
                 {s}
               </li>
@@ -129,26 +130,34 @@ export default function Contact() {
                 /* a mailto opened in a new tab hands back an empty one */
                 target={s.href.startsWith("http") ? "_blank" : undefined}
                 rel="noreferrer"
-                className="group relative transition-colors hover:text-ink"
+                className="tap group relative transition-colors hover:text-ink"
               >
                 {s.label}
                 <span className="absolute -bottom-0.5 left-0 block h-px w-0 bg-ember transition-all duration-300 group-hover:w-full" />
               </a>
             ))}
           </nav>
-          <span className="flex items-center gap-4">
+          {/* stacked on a phone: side by side, the place and the time push
+              "↑ TOP" into breaking across two lines */}
+          <span className="flex flex-col items-center gap-2 text-center sm:flex-row sm:gap-4">
             <span>
               HAMILTON, ONTARIO, CANADA — <LocalTime />
             </span>
-            <a href="#top" onClick={toTop} data-cursor="TOP" className="text-ink transition-colors hover:text-ember">
+            <a
+              href="#top"
+              onClick={toTop}
+              data-cursor="TOP"
+              className="tap whitespace-nowrap text-ink transition-colors hover:text-ember"
+            >
               ↑ TOP
             </a>
           </span>
         </div>
         <p className="mt-3 flex flex-col gap-1 text-center font-mono text-[9px] uppercase tracking-[0.2em] text-ink/50 md:flex-row md:justify-between md:text-left">
           <span>Designed & built by hand — no templates were harmed</span>
+          {/* the audio layer came out; a colophon that lists it is just wrong */}
           <span>
-            COLOPHON: NEXT.JS · R3F · GLSL · GSAP · WEB AUDIO · 16,384 PARTICLES ·
+            COLOPHON: NEXT.JS · R3F · GLSL · GSAP · 16,384 PARTICLES ·
             SYNE / INSTRUMENT / PLEX MONO
           </span>
         </p>

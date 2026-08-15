@@ -21,7 +21,7 @@ npm run build   # production build
 
 Next.js 15 · TypeScript · TailwindCSS 4 · React Three Fiber · custom GLSL ·
 @react-three/postprocessing (bloom, chromatic aberration, vignette) ·
-GSAP + ScrollTrigger · Lenis · Framer Motion · Web Audio (generative, no assets)
+GSAP + ScrollTrigger · Lenis · Framer Motion
 
 ## Architecture
 
@@ -37,6 +37,27 @@ GSAP + ScrollTrigger · Lenis · Framer Motion · Web Audio (generative, no asse
   computes the continuous section blend that drives morph, palette and camera.
 - `components/sections/*` — each section has its own layout language; the lab
   is a GSAP-pinned horizontal scroll.
+
+## Contact form
+
+`components/ContactForm.tsx` is a dialog opened from anywhere with
+`window.dispatchEvent(new Event("open-contact"))` — the header CTA, the hero
+sentence and the portal ring all do. It posts to `app/api/contact/route.ts`,
+which delivers by whichever of these environment variables is set:
+
+| Variable | What it does |
+| --- | --- |
+| `RESEND_API_KEY` | Sends the enquiry as an email through [Resend](https://resend.com). |
+| `CONTACT_TO` | Where it goes. Defaults to `EMAIL` in `lib/data.ts`. |
+| `CONTACT_FROM` | Sender. Defaults to Resend's shared `onboarding@resend.dev`, which needs no DNS setup but only delivers to the address that owns the key. |
+| `CONTACT_WEBHOOK` | Alternative: POST the raw JSON to Formspree, Web3Forms, Zapier, a Discord webhook, anything. |
+
+Set them in Vercel under **Settings → Environment Variables**, then redeploy.
+
+**With none of them set the route answers 503 and the form hands the message
+to the visitor's mail client instead** — the behaviour the site had before the
+form existed. That is deliberate: an unconfigured deploy should fall back to
+something that works, not accept a message and quietly drop it.
 
 ## Customize
 

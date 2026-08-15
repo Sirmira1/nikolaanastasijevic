@@ -193,6 +193,18 @@ export const EXPERIMENTS: Experiment[] = [
   { index: "E—08", title: "CASUAL", medium: "Design study — approachable modern", gradient: ["#231a02", "#ffb454"], href: "https://casual-design-five.vercel.app/", image: "/img/Screenshot 2026-07-03 100054.png" },
 ];
 
+/** What I take on, listed once: the contact section prints it, the form asks with it. */
+export const SERVICES = [
+  "Websites",
+  "Web apps",
+  "Mobile apps",
+  "3D / interactive",
+  "Automation & AI",
+];
+
+/** Rough bands, so a first message can say the useful thing without awkwardness. */
+export const BUDGETS = ["Under $1k", "$1k — $5k", "$5k — $15k", "$15k+", "Not sure yet"];
+
 export const EMAIL = "nikolaanastasijevic0@gmail.com";
 
 /**

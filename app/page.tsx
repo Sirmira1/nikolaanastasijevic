@@ -7,6 +7,7 @@ import Preloader from "@/components/Preloader";
 import Cursor from "@/components/Cursor";
 import Header from "@/components/Header";
 import Terminal from "@/components/Terminal";
+import ContactForm from "@/components/ContactForm";
 import Guestbook from "@/components/Guestbook";
 import Gyro from "@/components/Gyro";
 import SectionRail from "@/components/SectionRail";
@@ -34,6 +35,7 @@ export default function Home() {
       <Header visible={started} />
       <SectionRail visible={started} />
       <Terminal />
+      <ContactForm />
       <Guestbook />
       <Gyro />
 

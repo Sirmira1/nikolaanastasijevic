@@ -76,17 +76,16 @@ export default function Hero() {
           I build websites, apps and software for people who need the real
           thing — designed, built and shipped by one person, from the first
           sketch to the live URL.{" "}
-          <a
-            href="#talk"
-            onClick={(e) => {
-              e.preventDefault();
-              document.querySelector("#talk")?.scrollIntoView({ behavior: "smooth" });
-            }}
+          {/* the sentence's own call to action, so it opens the form rather
+              than sending the reader to the bottom of the page to find one */}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event("open-contact"))}
             data-cursor="TALK"
             className="whitespace-nowrap text-ember underline decoration-ember/40 underline-offset-4 transition-colors hover:decoration-ember"
           >
             Available for work →
-          </a>
+          </button>
         </span>
         <span className="hidden text-right uppercase tracking-[0.24em] sm:block">
           WEB / MOBILE / DATA / 3D
