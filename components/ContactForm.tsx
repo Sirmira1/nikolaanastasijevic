@@ -57,6 +57,20 @@ export default function ContactForm() {
   useEffect(() => {
     const onOpen = () => {
       returnTo.current = document.activeElement as HTMLElement;
+      /*
+        Open on a blank form, always.
+
+        The dialog stays mounted after it closes, so a visitor who sent
+        something and came back later was met with the confirmation from last
+        time and no way past it short of reloading the page. The text inputs
+        are uncontrolled and reset themselves when the form remounts; these are
+        the pieces that were quietly surviving.
+      */
+      setState("idle");
+      setErrors({});
+      setFallback("");
+      setKinds([]);
+      setBudget("");
       setOpen(true);
     };
     window.addEventListener("open-contact", onOpen);
