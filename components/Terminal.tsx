@@ -5,8 +5,22 @@ import { AnimatePresence, motion } from "framer-motion";
 import { PROJECTS, SKILLS, SOCIALS, EMAIL } from "@/lib/data";
 import { world } from "@/lib/world";
 import { toggleCalm } from "@/lib/calm";
+import { validateField, type Field } from "@/lib/contact";
 
 type LogLine = { text: string; kind?: "in" | "ember" | "dim" };
+
+/**
+ * `msg` asks for the three things the form asks for, one line at a time, and
+ * posts to the same endpoint. Same rules, same inbox — just in the idiom of
+ * the room you are standing in.
+ */
+type Compose = { step: Field; name: string; email: string };
+
+const STEPS: Record<Field, { prompt: string; hint: string }> = {
+  name: { prompt: "name", hint: "who's writing" },
+  email: { prompt: "email", hint: "where I reply" },
+  message: { prompt: "message", hint: "what you're building" },
+};
 
 const BANNER: LogLine[] = [
   { text: "OBSERVATORY CONSOLE v2.6 — nikola@observatory", kind: "ember" },
@@ -21,7 +35,9 @@ const HELP: LogLine[] = [
   { text: "goto <section> .. fly there (who/work/craft/path/lab/talk)" },
   { text: "skills .......... the toolbox" },
   { text: "socials ......... where else to find me" },
-  { text: "contact ......... start an email" },
+  { text: "msg ............. write me a message without leaving the console" },
+  { text: "contact ......... open the contact form instead" },
+  { text: "email ........... hand it to your mail app" },
   { text: "sign ............ leave your mark in the void" },
   { text: "boom ............ do not press" },
   { text: "calm ............ toggle calm mode (no effects)" },
@@ -34,6 +50,8 @@ export default function Terminal() {
   const [log, setLog] = useState<LogLine[]>(BANNER);
   const [value, setValue] = useState("");
   const [history, setHistory] = useState<string[]>([]);
+  const [compose, setCompose] = useState<Compose | null>(null);
+  const [sending, setSending] = useState(false);
   const histIdx = useRef(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -62,14 +80,21 @@ export default function Terminal() {
     window.__lenis?.stop();
     inputRef.current?.focus();
     const onEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key !== "Escape") return;
+      // escape backs out of the message first; only a second one leaves
+      if (compose) {
+        setCompose(null);
+        print([{ text: "cancelled — nothing sent.", kind: "dim" }]);
+        return;
+      }
+      setOpen(false);
     };
     window.addEventListener("keydown", onEsc);
     return () => {
       window.removeEventListener("keydown", onEsc);
       window.__lenis?.start();
     };
-  }, [open]);
+  }, [open, compose]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight);
@@ -90,6 +115,78 @@ export default function Terminal() {
       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
     }, 250);
     return true;
+  };
+
+  const ask = (step: Field) =>
+    print([{ text: `${STEPS[step].prompt}? (${STEPS[step].hint})`, kind: "dim" }]);
+
+  const send = async (name: string, email: string, message: string) => {
+    setCompose(null);
+    setSending(true);
+    print([{ text: "transmitting…", kind: "ember" }]);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message, source: "console" }),
+      });
+      const body = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        print([
+          { text: "sent. it's in my inbox.", kind: "ember" },
+          { text: "I read everything — usually a reply within 24h.", kind: "dim" },
+        ]);
+      } else if (res.status === 400 && body.errors) {
+        print(Object.values(body.errors).map((t) => ({ text: String(t), kind: "ember" as const })));
+        print([{ text: "type 'msg' to start again", kind: "dim" }]);
+      } else if (res.status === 429) {
+        print([{ text: String(body.error ?? "too many messages — give it a minute."), kind: "dim" }]);
+      } else {
+        // delivery is not configured, or the provider is down: rather than eat
+        // what they typed, hand it over the way the form does
+        print([
+          { text: "the inbox link isn't live yet.", kind: "dim" },
+          { text: "handing it to your mail app instead…", kind: "dim" },
+        ]);
+        window.location.href =
+          `mailto:${EMAIL}?subject=${encodeURIComponent(`Project enquiry — ${name}`)}` +
+          `&body=${encodeURIComponent(`${message}\n\n— ${name}`)}`;
+      }
+    } catch {
+      print([{ text: "no connection. try again in a moment.", kind: "dim" }]);
+    }
+    setSending(false);
+  };
+
+  /** one answer at a time — the console's own version of the form */
+  const answer = (raw: string) => {
+    if (!compose) return;
+    const value = raw.trim();
+    print([{ text: `${STEPS[compose.step].prompt} > ${value}`, kind: "in" }]);
+
+    if (value.toLowerCase() === "cancel") {
+      setCompose(null);
+      print([{ text: "cancelled — nothing sent.", kind: "dim" }]);
+      return;
+    }
+
+    const problem = validateField(compose.step, value);
+    if (problem) {
+      // stay on the step rather than dropping them back to the prompt
+      print([{ text: problem, kind: "ember" }]);
+      return;
+    }
+
+    if (compose.step === "name") {
+      setCompose({ ...compose, name: value, step: "email" });
+      ask("email");
+    } else if (compose.step === "email") {
+      setCompose({ ...compose, email: value, step: "message" });
+      ask("message");
+    } else {
+      send(compose.name, compose.email, value);
+    }
   };
 
   const run = (raw: string) => {
@@ -141,7 +238,21 @@ export default function Terminal() {
       case "socials":
         print(SOCIALS.map((s) => ({ text: `${s.label.padEnd(10)} ${s.href}` })));
         break;
+      case "msg":
+      case "send":
+      case "write":
+        print([
+          { text: "new message — three lines, then it sends.", kind: "ember" },
+          { text: "'cancel' or ESC backs out.", kind: "dim" },
+        ]);
+        setCompose({ step: "name", name: "", email: "" });
+        ask("name");
+        break;
       case "contact":
+        print([{ text: "opening the contact form…", kind: "ember" }]);
+        setOpen(false);
+        setTimeout(() => window.dispatchEvent(new Event("open-contact")), 250);
+        break;
       case "email":
         print([{ text: `opening mail to ${EMAIL}…`, kind: "ember" }]);
         window.location.href = `mailto:${EMAIL}`;
@@ -181,13 +292,23 @@ export default function Terminal() {
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (sending) return;
     if (e.key === "Enter") {
+      if (compose) {
+        answer(value);
+        setValue("");
+        return;
+      }
       run(value);
       if (value.trim()) {
         setHistory((h) => [value, ...h].slice(0, 40));
       }
       histIdx.current = -1;
       setValue("");
+    } else if (compose) {
+      // no command history while composing — up-arrow inside a message would
+      // silently replace what you were writing
+      return;
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       const next = Math.min(histIdx.current + 1, history.length - 1);
@@ -256,18 +377,23 @@ export default function Terminal() {
               ))}
             </div>
 
+            {/* the prompt names the answer it is waiting for, so a half-finished
+                message is never a mystery */}
             <div className="flex items-center gap-2 border-t border-line px-4 py-3 font-mono text-xs">
-              <span className="text-ember">&gt;</span>
+              <span className="shrink-0 whitespace-nowrap text-ember">
+                {compose ? `${STEPS[compose.step].prompt} >` : ">"}
+              </span>
               <input
                 ref={inputRef}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 onKeyDown={onKeyDown}
-                className="flex-1 bg-transparent text-ink caret-ember outline-none placeholder:text-ink/25"
-                placeholder="help"
+                disabled={sending}
+                className="flex-1 bg-transparent text-ink caret-ember outline-none placeholder:text-ink/25 disabled:opacity-40"
+                placeholder={sending ? "sending…" : compose ? STEPS[compose.step].hint : "help"}
                 spellCheck={false}
                 autoComplete="off"
-                aria-label="Console input"
+                aria-label={compose ? `${STEPS[compose.step].prompt} — ${STEPS[compose.step].hint}` : "Console input"}
               />
             </div>
           </motion.div>

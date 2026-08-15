@@ -54,6 +54,11 @@ which delivers by whichever of these environment variables is set:
 
 Set them in Vercel under **Settings → Environment Variables**, then redeploy.
 
+The console (`/` or backtick) reaches the same endpoint: `msg` asks for a name,
+an email and a message one line at a time and posts them, `contact` opens the
+dialog, `email` falls back to a mailto. Messages carry a `source` so the
+enquiry says which door it came through.
+
 **With none of them set the route answers 503 and the form hands the message
 to the visitor's mail client instead** — the behaviour the site had before the
 form existed. That is deliberate: an unconfigured deploy should fall back to

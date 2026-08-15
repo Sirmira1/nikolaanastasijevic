@@ -19,33 +19,44 @@ export type Field = (typeof FIELDS)[number];
 export type Errors = Partial<Record<Field, string>>;
 
 /**
- * Every problem at once, keyed by field.
+ * One field's problem, or nothing.
  *
- * Returning only the first makes the visitor discover their mistakes one round
- * trip at a time. There is no floor on the message length either — "fix my
- * checkout" is a perfectly good first message, and a form that argues about
- * how much you have written is a form you close.
+ * Split out because the console asks for the three in turn and needs to judge
+ * each answer on its own — the dialog judges all three together. Same rules
+ * either way, which is the point of them living here.
+ *
+ * Note there is no floor on the message length: "fix my checkout" is a
+ * perfectly good first message, and a form that argues about how much you have
+ * written is a form you close.
  */
-export function validate(input: {
-  name?: unknown;
-  email?: unknown;
-  message?: unknown;
-}): Errors {
-  const name = String(input.name ?? "").trim();
-  const email = String(input.email ?? "").trim();
-  const message = String(input.message ?? "").trim();
+export function validateField(field: Field, raw: unknown): string | undefined {
+  const v = String(raw ?? "").trim();
+  switch (field) {
+    case "name":
+      if (!v) return "Tell me who you are.";
+      if (v.length > LIMITS.name) return "That name is too long.";
+      return;
+    case "email":
+      if (!v) return "I need somewhere to reply.";
+      if (v.length > LIMITS.email || !EMAIL_RE.test(v))
+        return "That email address doesn't look right.";
+      return;
+    case "message":
+      if (!v) return "Say a little about the project.";
+      if (v.length > LIMITS.message) return "That message is longer than this form takes.";
+      return;
+  }
+}
+
+/**
+ * Every problem at once, keyed by field. Returning only the first makes the
+ * visitor discover their mistakes one round trip at a time.
+ */
+export function validate(input: { name?: unknown; email?: unknown; message?: unknown }): Errors {
   const errors: Errors = {};
-
-  if (!name) errors.name = "Tell me who you are.";
-  else if (name.length > LIMITS.name) errors.name = "That name is too long.";
-
-  if (!email) errors.email = "I need somewhere to reply.";
-  else if (email.length > LIMITS.email || !EMAIL_RE.test(email))
-    errors.email = "That email address doesn't look right.";
-
-  if (!message) errors.message = "Say a little about the project.";
-  else if (message.length > LIMITS.message)
-    errors.message = "That message is longer than this form takes.";
-
+  for (const f of FIELDS) {
+    const problem = validateField(f, input[f]);
+    if (problem) errors[f] = problem;
+  }
   return errors;
 }

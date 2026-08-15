@@ -53,6 +53,7 @@ async function sendViaResend(payload: {
   budget: string;
   kinds: string[];
   message: string;
+  source: string;
 }) {
   const key = process.env.RESEND_API_KEY;
   if (!key) return false;
@@ -68,6 +69,7 @@ async function sendViaResend(payload: {
     ["Company", payload.company || "—"],
     ["Looking for", payload.kinds.length ? payload.kinds.join(", ") : "—"],
     ["Budget", payload.budget || "—"],
+    ["Sent from", payload.source === "console" ? "the console" : "the contact form"],
   ];
 
   const html =
@@ -148,6 +150,8 @@ export async function POST(request: Request) {
     budget: String(body.budget ?? "").trim().slice(0, 80),
     kinds: Array.isArray(body.kinds) ? body.kinds.map(String).slice(0, 8) : [],
     message: String(body.message).trim(),
+    // which door they came through; the console is a different kind of visitor
+    source: body.source === "console" ? "console" : "form",
     sentAt: new Date().toISOString(),
   };
 
