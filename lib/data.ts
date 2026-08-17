@@ -217,5 +217,5 @@ export const EMAIL = "nikolaanastasijevic0@gmail.com";
 export const SOCIALS = [
   { label: "Email", href: `mailto:${EMAIL}` },
   { label: "GitHub", href: "https://github.com/Sirmira1" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/nikola-anastasijevic-a737632ba/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/nikolaanastasijevic" },
 ];
