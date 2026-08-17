@@ -171,11 +171,23 @@ export default function Projects() {
                       meta instead, which is the better arrangement at that
                       width regardless.
 
-                      9vw is set by TRADEBOT, the longest title with nowhere to
-                      wrap: it fills the row at 9.44vw on a 360px screen, and
-                      the ceiling falls as the viewport narrows because the
-                      padding either side does not. The wrap rule is a net for
-                      a future title longer still, not the mechanism.
+                      Both sizes are set by TRADEBOT, the longest title with
+                      nowhere to wrap. It fills the phone row at 9.44vw on a
+                      360px screen, and the ceiling falls as the viewport
+                      narrows because the padding either side does not.
+
+                      The desktop size is capped in pixels as well as vw
+                      because this container stops growing at 1400px and a vw
+                      does not: past about 1970px the type kept widening inside
+                      a column that could not, so titles broke mid-word —
+                      TRADEB/OT, PROJE/CT GARAG/E — on any monitor wider than
+                      that. TRADEBOT stops fitting its 1205px track at 129.8px,
+                      so the cap is 120 rather than 128: the extra headroom is
+                      invisible at this size and covers the wider metrics of
+                      the fallback face, which is what is on screen until Syne
+                      finishes loading. Two-word titles still stack at the
+                      space, which is the intent; it is the breaks inside a
+                      word that were the bug.
                     */}
                     <div
                       className="grid grid-cols-[1fr_auto] items-baseline gap-x-4 gap-y-2 transition-opacity duration-500 md:grid-cols-[auto_1fr_auto] md:gap-x-10"
@@ -185,7 +197,7 @@ export default function Projects() {
                         {p.index}
                       </span>
                       <h3
-                        className={`text-stroke order-3 col-span-2 font-display text-[9vw] font-extrabold leading-[1.02] tracking-tight transition-all duration-500 [overflow-wrap:anywhere] md:order-none md:col-span-1 md:text-[6.5vw] ${
+                        className={`text-stroke order-3 col-span-2 font-display text-[9vw] font-extrabold leading-[1.02] tracking-tight transition-all duration-500 [overflow-wrap:anywhere] md:order-none md:col-span-1 md:text-[min(6.5vw,120px)] ${
                           isActive ? "translate-x-3" : ""
                         }`}
                         style={isActive ? { color: p.accent, WebkitTextStroke: "0px" } : undefined}
